@@ -1,15 +1,16 @@
-name: Lint on Commit
+name: Lint and build on Commit
 on:
   push:
     branches:
       - '**'
 
 jobs:
-  lint:
+  lint-client:
     runs-on: ubuntu-latest
     container:
-      image: node:20
+      image: node:24
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: npm ci
       - run: npm run lint
+      - run: npm run build
