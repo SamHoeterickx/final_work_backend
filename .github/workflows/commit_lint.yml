@@ -1,0 +1,14 @@
+name: Lint on Commit
+on:
+  push:
+    branches:
+      - '**'
+
+  lint-and-test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm run lint
