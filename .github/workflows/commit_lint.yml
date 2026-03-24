@@ -4,7 +4,8 @@ on:
     branches:
       - '**'
 
-  lint-and-test:
+jobs:
+  lint:
     runs-on: ubuntu-latest
     container:
       image: node:20
