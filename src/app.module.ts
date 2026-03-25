@@ -4,12 +4,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_PIPE } from '@nestjs/core';
+import { AuthModule } from './modules/auth/auth.module';
+import { SharedModule } from './shared/shared.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `env/.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: `.env`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -22,7 +24,9 @@ import { APP_PIPE } from '@nestjs/core';
         synchronize: false
       }),
       inject: [ConfigService],
-    })
+    }),
+    AuthModule,
+    SharedModule
   ],
   controllers: [AppController],
   providers: [
