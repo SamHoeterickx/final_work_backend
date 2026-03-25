@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from 'src/shared/shared.module';
+import { AuthResolver } from './auth.resolver';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), ConfigModule, SharedModule],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService, AuthResolver]
 })
 export class AuthModule {}
