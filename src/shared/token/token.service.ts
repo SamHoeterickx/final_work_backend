@@ -24,18 +24,39 @@ export class TokenService {
         this.JWT_REFRESH_SECRET = refreshSecret;
     }
 
+    /**
+     * Generate new access token with expiring time of 15 minutes
+     * 
+     * @param userId - string
+     * 
+     * @returns sting (jwt token)
+     */
     public generateAccessToken(userId: string): string {
         return sign({ sub: userId }, this.JWT_SIGN_SECRET, {
             expiresIn: '15m',
         });
     }
 
+    /**
+     * Generate new refresh token with expiringtime of 7days
+     * 
+     * @param userId - string
+     * 
+     * @returns string (jwt token)
+     */
     public generateRefreshToken(userId: string): string {
         return sign({ sub: userId }, this.JWT_REFRESH_SECRET, {
             expiresIn: '7d',
         });
     }
 
+    /**
+     * Verify refresh token to see if token is still valid or token is revoked
+     * 
+     * @param token - string
+     * 
+     * @returns JwtPayload or string
+     */
     public verifyRefreshToken(token: string): JwtPayload | string {
         return verify(token, this.JWT_REFRESH_SECRET);
     }

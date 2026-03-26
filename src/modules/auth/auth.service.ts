@@ -121,6 +121,17 @@ export class AuthService {
         }
     }
 
+    /**
+     * Check if JWT refresh token is still valid or is revoked
+     * when the token is still valid generate new access token and refresh token
+     * 
+     * @param refreshToken - string
+     * 
+     * @returns 
+     * a Promise with new jwt access token and jwt refresh token
+     * 
+     * @throws HttpException unauthorized
+     */
     public async refreshTokens(body: RefresTokenDto): Promise<IUserTokens> {
         const { refreshToken } = body;
         try {
