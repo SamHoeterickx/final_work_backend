@@ -47,7 +47,7 @@ export class AuthService {
                 );
             }
 
-            const match = this.comparePasswords(password, eUser.password);
+            const match = await this.comparePasswords(password, eUser.password);
             if (!match) {
                 throw new HttpException(
                     'Invalid credentials',
@@ -142,10 +142,16 @@ export class AuthService {
                 user.uuid,
             );
 
-            return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+            return {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+            };
         } catch (error: unknown) {
             console.error(error);
-            throw new HttpException('Invalid or expired refresh token', HttpStatus.UNAUTHORIZED);
+            throw new HttpException(
+                'Invalid or expired refresh token',
+                HttpStatus.UNAUTHORIZED,
+            );
         }
     }
 

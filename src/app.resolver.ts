@@ -3,9 +3,7 @@ import { AppService } from './app.service';
 
 @Resolver()
 export class AppResolver {
-    constructor(
-        private appService: AppService
-    ){}
+    constructor(private appService: AppService) {}
 
     @Query(() => String)
     public getHello(): string {

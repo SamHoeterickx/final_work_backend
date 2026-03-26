@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { sign, verify, type JwtPayload } from 'jsonwebtoken';
 
 @Injectable()
 export class TokenService {
@@ -25,18 +25,18 @@ export class TokenService {
     }
 
     public generateAccessToken(userId: string): string {
-        return jwt.sign({ sub: userId }, this.JWT_SIGN_SECRET, {
+        return sign({ sub: userId }, this.JWT_SIGN_SECRET, {
             expiresIn: '15m',
         });
     }
 
     public generateRefreshToken(userId: string): string {
-        return jwt.sign({ sub: userId }, this.JWT_REFRESH_SECRET, {
+        return sign({ sub: userId }, this.JWT_REFRESH_SECRET, {
             expiresIn: '7d',
         });
     }
 
     public verifyRefreshToken(token: string): JwtPayload | string {
-        return jwt.verify(token, this.JWT_REFRESH_SECRET);
+        return verify(token, this.JWT_REFRESH_SECRET);
     }
 }

@@ -9,6 +9,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { AppResolver } from './app.resolver';
+import { type Request } from 'express';
 
 @Module({
     imports: [
@@ -34,7 +35,7 @@ import { AppResolver } from './app.resolver';
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
-            context: ({req}) => ({req}),
+            context: ({ req }: { req: Request }) => ({ req }),
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
             sortSchema: true,
             playground: true,
