@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -8,6 +8,11 @@ import { UserTokens } from './models/user-tokens.model';
 @Resolver()
 export class AuthResolver {
     constructor(private authService: AuthService) {}
+
+    @Query(() => String)
+    public healthCheck(): string {
+        return 'OK';
+    }
 
     @Mutation(() => UserTokens)
     public async loginUser(
@@ -25,7 +30,7 @@ export class AuthResolver {
 
     @Mutation(() => UserTokens)
     public async refreshTokens(
-        @Args('input') input: RefresTokenDto
+        @Args('input') input: RefresTokenDto,
     ): Promise<UserTokens> {
         return this.authService.refreshTokens(input);
     }

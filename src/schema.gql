@@ -1,0 +1,36 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateUserDto {
+  email: String!
+  firstname: String!
+  lastname: String!
+  password: String!
+  repeatPassword: String!
+}
+
+input LoginUserDto {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  loginUser(input: LoginUserDto!): UserTokens!
+  refreshTokens(input: RefresTokenDto!): UserTokens!
+  registerUser(input: CreateUserDto!): UserTokens!
+}
+
+type Query {
+  getHello: String!
+  healthCheck: String!
+}
+
+input RefresTokenDto {
+  refreshToken: String!
+}
+
+type UserTokens {
+  accessToken: String!
+  refreshToken: String!
+}

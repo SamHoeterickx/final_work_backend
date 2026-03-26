@@ -1,6 +1,11 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { UserRoleType } from "src/shared/types/types";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { UserRoleType } from '../../../shared/types/types';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity('users')
@@ -28,7 +33,7 @@ export class User {
     @Column({
         type: 'enum',
         enum: UserRoleType,
-        default: UserRoleType.USER
+        default: UserRoleType.USER,
     })
     role: UserRoleType;
 

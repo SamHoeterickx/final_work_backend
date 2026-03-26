@@ -1,6 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Module, ValidationPipe } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -9,6 +8,7 @@ import { join } from 'path';
 import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './shared/shared.module';
+import { AppResolver } from './app.resolver';
 
 @Module({
     imports: [
@@ -16,7 +16,6 @@ import { SharedModule } from './shared/shared.module';
             isGlobal: true,
             envFilePath: '.env',
         }),
-        // Voeg de database connectie toe
         TypeOrmModule.forRootAsync({
             imports: [ConfigModule],
             inject: [ConfigService],
@@ -43,7 +42,6 @@ import { SharedModule } from './shared/shared.module';
         AuthModule,
         SharedModule,
     ],
-    controllers: [AppController],
     providers: [
         AppService,
         {
@@ -52,6 +50,7 @@ import { SharedModule } from './shared/shared.module';
                 whitelist: true,
             }),
         },
+        AppResolver,
     ],
 })
 export class AppModule {}
