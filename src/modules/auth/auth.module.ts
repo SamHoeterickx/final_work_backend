@@ -3,9 +3,9 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { ConfigModule } from '@nestjs/config';
-import { SharedModule } from 'src/shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 import { AuthResolver } from './auth.resolver';
-import { TokenService } from 'src/shared/token/token.service';
+import { TokenService } from '../../shared/token/token.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([User]), ConfigModule, SharedModule],

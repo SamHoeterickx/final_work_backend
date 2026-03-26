@@ -17,7 +17,7 @@ input LoginUserDto {
 
 type Mutation {
   loginUser(input: LoginUserDto!): UserTokens!
-  refreshTokens(input: RefresTokenDto!): UserTokens!
+  refreshTokens(input: RefreshTokenDto!): UserTokens!
   registerUser(input: CreateUserDto!): UserTokens!
 }
 
@@ -26,7 +26,7 @@ type Query {
   healthCheck: String!
 }
 
-input RefresTokenDto {
+input RefreshTokenDto {
   refreshToken: String!
 }
 

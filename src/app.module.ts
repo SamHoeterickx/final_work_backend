@@ -3,7 +3,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { TypeOrmModule } from '@nestjs/typeorm'; // TOEVOEGEN
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { APP_PIPE } from '@nestjs/core';
 import { AuthModule } from './modules/auth/auth.module';
@@ -38,7 +38,7 @@ import { type Request } from 'express';
             context: ({ req }: { req: Request }) => ({ req }),
             autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
             sortSchema: true,
-            playground: true,
+            playground: process.env.NODE_ENV !== 'production',
         }),
         AuthModule,
         SharedModule,

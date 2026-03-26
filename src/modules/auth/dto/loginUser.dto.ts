@@ -6,7 +6,7 @@ export class LoginUserDto {
     @Field()
     @IsEmail()
     @IsNotEmpty()
-    @MinLength(1, { message: 'Email is to short' })
+    @MinLength(1, { message: 'Email is too short' })
     email: string;
 
     @Field()

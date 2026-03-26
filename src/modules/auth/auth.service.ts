@@ -9,11 +9,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
-import bcrypt from 'node_modules/bcryptjs';
+import bcrypt from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
 import { IUserTokens } from 'src/shared/types/types';
 import { TokenService } from 'src/shared/token/token.service';
-import { RefresTokenDto } from './dto/refreshToken.dto';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,18 +41,12 @@ export class AuthService {
             });
 
             if (!eUser) {
-                throw new HttpException(
-                    'Invalid credentials',
-                    HttpStatus.CONFLICT,
-                );
+                throw new HttpException('Invalid credentials', 409);
             }
 
             const match = await this.comparePasswords(password, eUser.password);
             if (!match) {
-                throw new HttpException(
-                    'Invalid credentials',
-                    HttpStatus.CONFLICT,
-                );
+                throw new HttpException('Invalid credentials', 409);
             }
 
             const accessToken = this.tokenService.generateAccessToken(
@@ -65,6 +59,9 @@ export class AuthService {
             return { accessToken, refreshToken };
         } catch (error: unknown) {
             console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new InternalServerErrorException(
                 `Failed to encrypt password: ${error instanceof Error ? error.message : String(error)}`,
             );
@@ -76,10 +73,7 @@ export class AuthService {
 
         try {
             if (password !== repeatPassword) {
-                throw new HttpException(
-                    'Invalid credentials',
-                    HttpStatus.CONFLICT,
-                );
+                throw new HttpException('Invalid credentials', 409);
             }
 
             const eUser = await this.authRepository.findOne({
@@ -89,10 +83,7 @@ export class AuthService {
             });
 
             if (eUser) {
-                throw new HttpException(
-                    'Invalid credentials',
-                    HttpStatus.CONFLICT,
-                );
+                throw new HttpException('Invalid credentials', 409);
             }
 
             const hPassword = await this.hashPassword(password);
@@ -115,8 +106,11 @@ export class AuthService {
             return { accessToken, refreshToken };
         } catch (error: unknown) {
             console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new InternalServerErrorException(
-                `Failed to encrypt password: ${error instanceof Error ? error.message : String(error)}`,
+                `Failed to create user: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }
@@ -124,15 +118,15 @@ export class AuthService {
     /**
      * Check if JWT refresh token is still valid or is revoked
      * when the token is still valid generate new access token and refresh token
-     * 
+     *
      * @param refreshToken - string
-     * 
-     * @returns 
+     *
+     * @returns
      * a Promise with new jwt access token and jwt refresh token
-     * 
+     *
      * @throws HttpException unauthorized
      */
-    public async refreshTokens(body: RefresTokenDto): Promise<IUserTokens> {
+    public async refreshTokens(body: RefreshTokenDto): Promise<IUserTokens> {
         const { refreshToken } = body;
         try {
             const payload = this.tokenService.verifyRefreshToken(refreshToken);
@@ -149,7 +143,7 @@ export class AuthService {
             const newAccessToken = this.tokenService.generateAccessToken(
                 user.uuid,
             );
-            const newRefreshToken = this.tokenService.generateAccessToken(
+            const newRefreshToken = this.tokenService.generateRefreshToken(
                 user.uuid,
             );
 
@@ -159,6 +153,9 @@ export class AuthService {
             };
         } catch (error: unknown) {
             console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
             throw new HttpException(
                 'Invalid or expired refresh token',
                 HttpStatus.UNAUTHORIZED,

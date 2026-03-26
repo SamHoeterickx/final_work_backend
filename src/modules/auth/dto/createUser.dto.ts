@@ -8,29 +8,29 @@ import {
 } from 'class-validator';
 
 @InputType()
-export class CreateUserDto {
+export class CreateUserDtoo {
     @Field()
     @IsString()
     @IsNotEmpty()
-    @MinLength(1, { message: 'Firstname is to short' })
+    @MinLength(1, { message: 'Firstname is too short' })
     firstname: string;
 
     @Field()
     @IsString()
     @IsNotEmpty()
-    @MinLength(1, { message: 'Lastname is to short' })
+    @MinLength(1, { message: 'Lastname is too short' })
     lastname: string;
 
     @Field()
     @IsEmail()
     @IsNotEmpty()
-    @MinLength(1, { message: 'Email is to short' })
+    @MinLength(1, { message: 'Email is too short' })
     email: string;
 
     @Field()
     @IsString()
     @IsNotEmpty()
-    @MinLength(8, { message: 'Password is to short' })
+    @MinLength(8, { message: 'Password is too short' })
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
         message: 'password too weak',
     })
@@ -39,7 +39,7 @@ export class CreateUserDto {
     @Field()
     @IsString()
     @IsNotEmpty()
-    @MinLength(8, { message: 'Repeat password is to short' })
+    @MinLength(8, { message: 'Repeat password is too short' })
     @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
         message: 'password too weak',
     })
