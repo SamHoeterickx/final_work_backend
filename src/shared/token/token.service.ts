@@ -5,23 +5,23 @@ import { hash } from 'bcryptjs';
 
 @Injectable()
 export class TokenService {
-    private JWT_SIGN_SECRET: string;
+    private JWT_ACCESS_SECRET: string;
     private JWT_REFRESH_SECRET: string;
     constructor(private configService: ConfigService) {
-        const signSecret = this.configService.get<string>('JWT_SIGN_SECRET');
+        const signSecret = this.configService.get<string>('JWT_ACCESS_SECRET');
         const refreshSecret =
             this.configService.get<string>('JWT_REFRESH_SECRET');
 
         if (!signSecret)
             throw new InternalServerErrorException(
-                'JWT_SIGN_SECRET environment is not set',
+                'JWT_ACCESS_SECRET environment is not set',
             );
         if (!refreshSecret)
             throw new InternalServerErrorException(
                 'JWT_REFRESH_SECRET environment is not set',
             );
 
-        this.JWT_SIGN_SECRET = signSecret;
+        this.JWT_ACCESS_SECRET = signSecret;
         this.JWT_REFRESH_SECRET = refreshSecret;
     }
 
@@ -33,7 +33,7 @@ export class TokenService {
      * @returns string (jwt token)
      */
     public generateAccessToken(userId: string): string {
-        return sign({ sub: userId }, this.JWT_SIGN_SECRET, {
+        return sign({ sub: userId }, this.JWT_ACCESS_SECRET, {
             expiresIn: '15m',
         });
     }
@@ -58,18 +58,21 @@ export class TokenService {
      *
      * @returns JwtPayload or string
      */
+    public verifyAccessToken(token: string): JwtPayload | string {
+        return verify(token, this.JWT_ACCESS_SECRET);
+    }
     public verifyRefreshToken(token: string): JwtPayload | string {
         return verify(token, this.JWT_REFRESH_SECRET);
     }
 
     /**
      * Hash refresh token using bcyrpt
-     * 
+     *
      * @param refreshToken - string
-     * 
+     *
      * @returns
      * a Promise containing a string
-     * 
+     *
      * @throws Error
      */
     public async hashRefreshToken(refreshToken: string): Promise<string> {

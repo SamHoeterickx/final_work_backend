@@ -133,6 +133,22 @@ export class AuthService {
         }
     }
 
+    public async logout(uuid: string) {
+        try {
+            await this.authRepository.update(
+                { uuid: uuid },
+                { currentHashedRefreshToken: null },
+            );
+
+            return true;
+        } catch (error: unknown) {
+            console.error(error);
+            throw new InternalServerErrorException(
+                `Failed to logout user: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
     /**
      * Check if JWT refresh token is still valid or is revoked
      * when the token is still valid generate new access token and refresh token
@@ -171,6 +187,31 @@ export class AuthService {
             }
 
             return await this.generateNewTokens(user.uuid);
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException(
+                'Invalid or expired refresh token',
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+
+    /**
+     * Find user by uuid
+     *
+     * @param uuid string
+     *
+     * @returns
+     * a Promise containing User or null or undefined
+     *
+     * @throws
+     */
+    public async findOneByUuid(uuid: string): Promise<User | null | undefined> {
+        try {
+            return await this.authRepository.findOne({ where: { uuid: uuid } });
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -226,16 +267,16 @@ export class AuthService {
     }
 
     /**
-     * Generate new JWT access token and JWT refresh token, 
+     * Generate new JWT access token and JWT refresh token,
      * hash the new JWT refresh token and save this hashed token in the database
-     * 
+     *
      * @param uuid - string
-     * 
-     * @returns 
-     * a Promise with an object containing 
+     *
+     * @returns
+     * a Promise with an object containing
      * - accessToken: string
      * - refreshToken: string
-     * 
+     *
      * @throws Error
      */
     private async generateNewTokens(uuid: string): Promise<IUserTokens> {

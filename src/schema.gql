@@ -16,6 +16,7 @@ input LoginUserDto {
 }
 
 type Mutation {
+  logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
   registerUser(input: CreateUserDto!): UserTokens!

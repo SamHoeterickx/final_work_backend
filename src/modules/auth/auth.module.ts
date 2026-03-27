@@ -9,7 +9,11 @@ import { TokenService } from '../../shared/token/token.service';
 import { UserProfile } from './entity/user_profile.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, UserProfile]), ConfigModule, SharedModule],
+    imports: [
+        TypeOrmModule.forFeature([User, UserProfile]),
+        ConfigModule,
+        SharedModule,
+    ],
     providers: [AuthService, AuthResolver, TokenService],
 })
 export class AuthModule {}
