@@ -31,6 +31,7 @@ import { type Request } from 'express';
                 synchronize: false,
                 migrations: [join(__dirname, 'database/migrations/*.{ts,js}')],
                 migrationsRun: false,
+                logging: true,
             }),
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({

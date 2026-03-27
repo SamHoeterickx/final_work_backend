@@ -1,5 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserRoleType } from '../../../shared/types/types';
+import {
+    type IOnboardingData,
+    UserRoleType,
+} from '../../../shared/types/types';
 import {
     Column,
     CreateDateColumn,
@@ -17,10 +20,6 @@ export class User {
     @Field()
     @Column()
     firstname: string;
-
-    @Field()
-    @Column()
-    lastname: string;
 
     @Field()
     @Column({ unique: true })

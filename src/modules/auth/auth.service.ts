@@ -9,11 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
-import bcrypt from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IUserTokens } from 'src/shared/types/types';
-import { TokenService } from 'src/shared/token/token.service';
+import { IOnboardingData, IUserTokens } from '../../shared/types/types';
+import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
+import { UserProfile } from './entity/user_profile.entity';
+import { OnboardingInput } from './dto/OnboardingInput.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +23,8 @@ export class AuthService {
 
     constructor(
         @InjectRepository(User) private authRepository: Repository<User>,
+        @InjectRepository(UserProfile)
+        private UserProfileRepository: Repository<UserProfile>,
         private configService: ConfigService,
         private tokenService: TokenService,
     ) {
@@ -69,7 +73,7 @@ export class AuthService {
     }
 
     public async createNewUser(body: CreateUserDto): Promise<IUserTokens> {
-        const { firstname, lastname, email, password, repeatPassword } = body;
+        const { firstname, email, password, repeatPassword, onboarding } = body;
 
         try {
             if (password !== repeatPassword) {
@@ -88,14 +92,32 @@ export class AuthService {
 
             const hPassword = await this.hashPassword(password);
 
-            const newUser = this.authRepository.create({
-                firstname,
-                lastname,
-                email,
-                password: hPassword,
-            });
+            const user = await this.authRepository.manager.transaction(
+                async (manager) => {
+                    const newUser = manager.create(User, {
+                        firstname,
+                        email,
+                        password: hPassword,
+                    });
+                    const savedUser = await manager.save(newUser);
 
-            const user = await this.authRepository.save(newUser);
+                    const newProfile = Object.assign(new UserProfile(), {
+                        currentBehaviour: onboarding.currentBehaviour,
+                        experienceLevel: onboarding.experienceLevel,
+                        goal: onboarding.goal,
+                        currentPreference: onboarding.currentPreferences,
+                        desiredTempo: onboarding.desiredTempo,
+                        currentMethodes: onboarding.currentMethodes ?? null,
+                        extraGear: onboarding.extraGear ?? null,
+                        fullOnboardingData: onboarding,
+                        user: savedUser,
+                    });
+                    await manager.save(newProfile);
+
+                    return savedUser;
+                },
+            );
+
             const accessToken = this.tokenService.generateAccessToken(
                 user.uuid,
             );
@@ -173,7 +195,7 @@ export class AuthService {
      */
     private hashPassword(password: string): Promise<string> {
         try {
-            return bcrypt.hash(password + this.SECRET_SALT, 10);
+            return hash(password + this.SECRET_SALT, 10);
         } catch (error: unknown) {
             console.error(error);
             throw new Error(
@@ -196,7 +218,7 @@ export class AuthService {
         dbPassword: string,
     ): Promise<boolean> {
         try {
-            return bcrypt.compare(password + this.SECRET_SALT, dbPassword);
+            return compare(password + this.SECRET_SALT, dbPassword);
         } catch (error: unknown) {
             console.error(error);
             throw new Error(

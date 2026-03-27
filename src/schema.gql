@@ -5,7 +5,7 @@
 input CreateUserDto {
   email: String!
   firstname: String!
-  lastname: String!
+  onboarding: OnboardingInput!
   password: String!
   repeatPassword: String!
 }
@@ -19,6 +19,16 @@ type Mutation {
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
   registerUser(input: CreateUserDto!): UserTokens!
+}
+
+input OnboardingInput {
+  currentBehaviour: [String!]!
+  currentMethodes: [String!]
+  currentPreferences: String!
+  desiredTempo: String!
+  experienceLevel: String!
+  extraGear: [String!]
+  goal: String!
 }
 
 type Query {

@@ -5,7 +5,10 @@ import {
     IsString,
     Matches,
     MinLength,
+    ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { OnboardingInput } from './OnboardingInput.dto';
 
 @InputType()
 export class CreateUserDto {
@@ -14,12 +17,6 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(1, { message: 'Firstname is too short' })
     firstname: string;
-
-    @Field()
-    @IsString()
-    @IsNotEmpty()
-    @MinLength(1, { message: 'Lastname is too short' })
-    lastname: string;
 
     @Field()
     @IsEmail()
@@ -44,4 +41,9 @@ export class CreateUserDto {
         message: 'password too weak',
     })
     repeatPassword: string;
+
+    @Field(() => OnboardingInput)
+    @ValidateNested()
+    @Type(() => OnboardingInput)
+    onboarding: OnboardingInput;
 }
