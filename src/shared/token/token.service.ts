@@ -52,7 +52,7 @@ export class TokenService {
     }
 
     /**
-     * Verify refresh token to see if token is still valid or token is revoked
+     * Verify access token to see if token is still valid or token is revoked
      *
      * @param token - string
      *
@@ -61,6 +61,14 @@ export class TokenService {
     public verifyAccessToken(token: string): JwtPayload | string {
         return verify(token, this.JWT_ACCESS_SECRET);
     }
+
+    /**
+     * Verify refresh token to see if token is still valid or token is revoked
+     *
+     * @param token - string
+     *
+     * @returns JwtPayload or string
+     */
     public verifyRefreshToken(token: string): JwtPayload | string {
         return verify(token, this.JWT_REFRESH_SECRET);
     }

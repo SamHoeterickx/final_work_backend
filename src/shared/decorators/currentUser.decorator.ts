@@ -6,6 +6,11 @@ interface AuthenticatedRequest extends Request {
     user?: unknown;
 }
 
+/**
+ * Get current user out of the request
+ * 
+ * @returns User
+ */
 export const CurrentUser = createParamDecorator(
     (data: unknown, context: ExecutionContext) => {
         const ctx = GqlExecutionContext.create(context);

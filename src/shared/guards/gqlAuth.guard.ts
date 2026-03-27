@@ -15,6 +15,13 @@ interface AuthenticatedRequest extends Request {
     user?: unknown;
 }
 
+/**
+ * Check header for authroziation bearer token
+ * Verify if current access token is stil valid
+ * Set user to request
+ *
+ * @returns boolean
+ */
 @Injectable()
 export class GqlAuthGuard implements CanActivate {
     constructor(
