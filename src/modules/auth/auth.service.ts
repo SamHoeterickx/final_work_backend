@@ -92,7 +92,7 @@ export class AuthService {
 
             const hPassword = await this.hashPassword(password);
 
-            const user = await this.authRepository.manager.transaction(
+            const result = await this.authRepository.manager.transaction(
                 async (manager) => {
                     const newUser = manager.create(User, {
                         firstname,
@@ -114,18 +114,24 @@ export class AuthService {
                     });
                     await manager.save(newProfile);
 
-                    return savedUser;
+                    const accessToken = this.tokenService.generateAccessToken(
+                        savedUser.uuid,
+                    );
+                    const refreshToken = this.tokenService.generateRefreshToken(
+                        savedUser.uuid,
+                    );
+                    const hRefreshToken =
+                        await this.hashRefreshToken(refreshToken);
+
+                    await manager.update(User, savedUser.uuid, {
+                        currentHashedRefreshToken: hRefreshToken,
+                    });
+
+                    return { accessToken, refreshToken };
                 },
             );
 
-            const accessToken = this.tokenService.generateAccessToken(
-                user.uuid,
-            );
-            const refreshToken = this.tokenService.generateRefreshToken(
-                user.uuid,
-            );
-
-            return { accessToken, refreshToken };
+            return result;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -223,6 +229,17 @@ export class AuthService {
             console.error(error);
             throw new Error(
                 `Failed to encode password: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    private async hashRefreshToken(refreshToken: string): Promise<string> {
+        try {
+            return await hash(refreshToken, 10);
+        } catch (error: unknown) {
+            console.error(error);
+            throw new Error(
+                `Failed to hash refreshToken: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }

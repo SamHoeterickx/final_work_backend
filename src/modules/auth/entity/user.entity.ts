@@ -1,8 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import {
-    type IOnboardingData,
-    UserRoleType,
-} from '../../../shared/types/types';
+import { UserRoleType } from '../../../shared/types/types';
 import {
     Column,
     CreateDateColumn,
@@ -35,6 +32,10 @@ export class User {
         default: UserRoleType.USER,
     })
     role: UserRoleType;
+
+    @Field({ nullable: true })
+    @Column({ type: 'varchar', nullable: true })
+    currentHashedRefreshToken: string | null;
 
     @Field()
     @CreateDateColumn()
