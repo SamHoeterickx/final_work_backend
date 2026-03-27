@@ -11,11 +11,10 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IOnboardingData, IUserTokens } from '../../shared/types/types';
+import { IUserTokens } from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
-import { OnboardingInput } from './dto/OnboardingInput.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,8 +22,6 @@ export class AuthService {
 
     constructor(
         @InjectRepository(User) private authRepository: Repository<User>,
-        @InjectRepository(UserProfile)
-        private UserProfileRepository: Repository<UserProfile>,
         private configService: ConfigService,
         private tokenService: TokenService,
     ) {
@@ -53,14 +50,7 @@ export class AuthService {
                 throw new HttpException('Invalid credentials', 409);
             }
 
-            const accessToken = this.tokenService.generateAccessToken(
-                eUser.uuid,
-            );
-            const refreshToken = this.tokenService.generateRefreshToken(
-                eUser.uuid,
-            );
-
-            return { accessToken, refreshToken };
+            return await this.generateNewTokens(eUser.uuid);
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -121,7 +111,7 @@ export class AuthService {
                         savedUser.uuid,
                     );
                     const hRefreshToken =
-                        await this.hashRefreshToken(refreshToken);
+                        await this.tokenService.hashRefreshToken(refreshToken);
 
                     await manager.update(User, savedUser.uuid, {
                         currentHashedRefreshToken: hRefreshToken,
@@ -162,23 +152,25 @@ export class AuthService {
                 where: { uuid: payload.sub as string },
             });
 
-            if (!user) {
+            if (!user || !user.currentHashedRefreshToken) {
                 throw new HttpException(
-                    'User no longer exists',
+                    'Logged out or session expired',
                     HttpStatus.UNAUTHORIZED,
                 );
             }
-            const newAccessToken = this.tokenService.generateAccessToken(
-                user.uuid,
-            );
-            const newRefreshToken = this.tokenService.generateRefreshToken(
-                user.uuid,
-            );
 
-            return {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken,
-            };
+            const isMatch = await compare(
+                refreshToken,
+                user.currentHashedRefreshToken,
+            );
+            if (!isMatch) {
+                throw new HttpException(
+                    'Invalid refresh token',
+                    HttpStatus.UNAUTHORIZED,
+                );
+            }
+
+            return await this.generateNewTokens(user.uuid);
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -233,13 +225,38 @@ export class AuthService {
         }
     }
 
-    private async hashRefreshToken(refreshToken: string): Promise<string> {
+    /**
+     * Generate new JWT access token and JWT refresh token, 
+     * hash the new JWT refresh token and save this hashed token in the database
+     * 
+     * @param uuid - string
+     * 
+     * @returns 
+     * a Promise with an object containing 
+     * - accessToken: string
+     * - refreshToken: string
+     * 
+     * @throws Error
+     */
+    private async generateNewTokens(uuid: string): Promise<IUserTokens> {
         try {
-            return await hash(refreshToken, 10);
+            const accessToken = this.tokenService.generateAccessToken(uuid);
+            const refreshToken = this.tokenService.generateRefreshToken(uuid);
+            const hRefreshToken =
+                await this.tokenService.hashRefreshToken(refreshToken);
+
+            await this.authRepository.update(
+                { uuid },
+                {
+                    currentHashedRefreshToken: hRefreshToken,
+                },
+            );
+
+            return { accessToken, refreshToken };
         } catch (error: unknown) {
             console.error(error);
             throw new Error(
-                `Failed to hash refreshToken: ${error instanceof Error ? error.message : String(error)}`,
+                `Failed to generate new tokens: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }

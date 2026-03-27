@@ -33,7 +33,7 @@ export class User {
     })
     role: UserRoleType;
 
-    @Field({ nullable: true })
+    @Field(() => String, { nullable: true })
     @Column({ type: 'varchar', nullable: true })
     currentHashedRefreshToken: string | null;
 

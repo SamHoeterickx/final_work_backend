@@ -1,6 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { sign, verify, type JwtPayload } from 'jsonwebtoken';
+import { hash } from 'bcryptjs';
 
 @Injectable()
 export class TokenService {
@@ -59,5 +60,26 @@ export class TokenService {
      */
     public verifyRefreshToken(token: string): JwtPayload | string {
         return verify(token, this.JWT_REFRESH_SECRET);
+    }
+
+    /**
+     * Hash refresh token using bcyrpt
+     * 
+     * @param refreshToken - string
+     * 
+     * @returns
+     * a Promise containing a string
+     * 
+     * @throws Error
+     */
+    public async hashRefreshToken(refreshToken: string): Promise<string> {
+        try {
+            return await hash(refreshToken, 10);
+        } catch (error: unknown) {
+            console.error(error);
+            throw new Error(
+                `Failed to hash refreshToken: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
     }
 }
