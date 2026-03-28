@@ -18,20 +18,20 @@ import { UserProfile } from './entity/user_profile.entity';
 
 @Injectable()
 export class AuthService {
-    private SECRET_SALT: string;
+    private PEPPER: string;
 
     constructor(
         @InjectRepository(User) private authRepository: Repository<User>,
         private configService: ConfigService,
         private tokenService: TokenService,
     ) {
-        const SALT = this.configService.get<string>('SECRET_SALT');
+        const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)
             throw new InternalServerErrorException(
-                'SECRET_SALT environment is not set',
+                'PEPPER environment is not set',
             );
 
-        this.SECRET_SALT = SALT;
+        this.PEPPER = SALT;
     }
 
     public async loginUser(body: LoginUserDto): Promise<IUserTokens> {
@@ -234,7 +234,7 @@ export class AuthService {
      */
     private hashPassword(password: string): Promise<string> {
         try {
-            return hash(password + this.SECRET_SALT, 10);
+            return hash(password + this.PEPPER, 10);
         } catch (error: unknown) {
             console.error(error);
             throw new Error(
@@ -257,7 +257,7 @@ export class AuthService {
         dbPassword: string,
     ): Promise<boolean> {
         try {
-            return compare(password + this.SECRET_SALT, dbPassword);
+            return compare(password + this.PEPPER, dbPassword);
         } catch (error: unknown) {
             console.error(error);
             throw new Error(

@@ -34,6 +34,7 @@ export class TokenService {
      */
     public generateAccessToken(userId: string): string {
         return sign({ sub: userId }, this.JWT_ACCESS_SECRET, {
+            algorithm: 'HS256',
             expiresIn: '15m',
         });
     }
@@ -47,6 +48,7 @@ export class TokenService {
      */
     public generateRefreshToken(userId: string): string {
         return sign({ sub: userId }, this.JWT_REFRESH_SECRET, {
+            algorithm: 'HS256',
             expiresIn: '7d',
         });
     }
