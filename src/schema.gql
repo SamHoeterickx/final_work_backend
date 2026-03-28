@@ -1,0 +1,47 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateUserDto {
+  email: String!
+  firstname: String!
+  onboarding: OnboardingInput!
+  password: String!
+  repeatPassword: String!
+}
+
+input LoginUserDto {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  logOut: Boolean!
+  loginUser(input: LoginUserDto!): UserTokens!
+  refreshTokens(input: RefreshTokenDto!): UserTokens!
+  registerUser(input: CreateUserDto!): UserTokens!
+}
+
+input OnboardingInput {
+  currentBehaviour: [String!]!
+  currentMethodes: [String!]
+  currentPreferences: String!
+  desiredTempo: String!
+  experienceLevel: String!
+  extraGear: [String!]
+  goal: String!
+}
+
+type Query {
+  getHello: String!
+  healthCheck: String!
+}
+
+input RefreshTokenDto {
+  refreshToken: String!
+}
+
+type UserTokens {
+  accessToken: String!
+  refreshToken: String!
+}
