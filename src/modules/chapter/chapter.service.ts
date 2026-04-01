@@ -36,4 +36,34 @@ export class ChapterService {
             );
         }
     }
+
+    public async findBySlug(slug: string): Promise<Chapter> {
+        try {
+            const chapter = await this.chapterRepository.findOne({
+                where: {
+                    slug,
+                },
+                relations: ['lessons'],
+                order: {
+                    order: 'ASC',
+                    lessons: {
+                        order: 'ASC',
+                    },
+                },
+            });
+            if (!chapter) {
+                throw new HttpException(
+                    'No chapters found',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+
+            return chapter;
+        } catch (error) {
+            throw new HttpException(
+                `${error instanceof Error ? error.message : String(error)}`,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
 }

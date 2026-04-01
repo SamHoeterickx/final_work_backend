@@ -69,6 +69,7 @@ input OnboardingInput {
 type Query {
   getAllChapters: [Chapter!]!
   getAllLessons: [Lesson!]!
+  getChapterBySlug(slug: String!): Chapter!
   getHello: String!
   healthCheck: String!
 }
