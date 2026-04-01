@@ -3,6 +3,7 @@ import { ChapterService } from './chapter.service';
 import { Chapter } from './entity/chapter.entity';
 import { GqlAuthGuard } from 'src/shared/guards/gqlAuth.guard';
 import { UseGuards } from '@nestjs/common';
+import { GetChapterOption } from './dto/getChapterOption.dto';
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
@@ -13,14 +14,11 @@ export class ChapterResolver {
     public async getAllChapters(): Promise<Chapter[]> {
         return await this.chapterService.findAll();
     }
-
+    
     @Query(() => Chapter)
-    public async getChapterBySlug(@Args('slug') slug: string) {
-        return await this.chapterService.findBySlug(slug);
-    }
-
-    @Query(() => Chapter)
-    public async getChapterByUuid(@Args('uuid') uuid: string) {
-        return await this.chapterService.findByUuid(uuid);
+    public async getChapter(
+        @Args('option') option: GetChapterOption
+    ){
+        return await this.chapterService.findBy(option);
     }
 }

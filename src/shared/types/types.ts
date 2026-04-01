@@ -14,6 +14,13 @@ export enum TagOptions {
 }
 registerEnumType(TagOptions, { name: 'TagOptions' });
 
+export enum GetChapterOptionEnum {
+    UUID = 'uuid',
+    SLUG = 'slug',
+    NAME = 'name'
+}
+
+
 //===========================
 //==========TYPES============
 //===========================
