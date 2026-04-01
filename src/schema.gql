@@ -75,8 +75,6 @@ type Query {
   getAllChapters: [Chapter!]!
   getAllLessons: [Lesson!]!
   getChapter(option: GetChapterOption!): Chapter!
-  getChapterBySlug(slug: String!): Chapter!
-  getChapterByUuid(uuid: String!): Chapter!
   getHello: String!
   healthCheck: String!
 }

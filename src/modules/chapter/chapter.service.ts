@@ -38,7 +38,18 @@ export class ChapterService {
         }
     }
 
-    
+    /**
+     * Find a chapter based on the findOption
+     * 
+     * @param findOption - GetChapterOption
+     * - option: 'uuid' | 'slug' | 'name'
+     * - value: string
+     * 
+     * @returns
+     * a Promise containing the found chapter
+     * 
+     * @throws Error if there is no Chapter found with the given findOption
+     */
     public async findBy(findOption: GetChapterOption): Promise<Chapter> {
         try {
             const { option, value } = findOption;
