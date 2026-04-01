@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
@@ -14,7 +14,7 @@ import { ConfigService } from '@nestjs/config';
 import { IUserTokens } from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
-import { UserProfile } from './entity/user_profile.entity';
+import { UserProfile } from '../user/entity/user_profile.entity';
 
 @Injectable()
 export class AuthService {

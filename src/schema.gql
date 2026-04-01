@@ -79,6 +79,23 @@ enum TagOptions {
   TEST
 }
 
+type User {
+  created_at: DateTime!
+  currentHashedRefreshToken: String
+  email: String!
+  firstname: String!
+  progress: [UserProgress!]!
+  role: String!
+  uuid: ID!
+}
+
+type UserProgress {
+  isCompleted: Boolean!
+  lesson: Lesson!
+  user: User!
+  uuid: ID!
+}
+
 type UserTokens {
   accessToken: String!
   refreshToken: String!

@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserTokens } from './models/user-tokens.model';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
-import { User } from './entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 

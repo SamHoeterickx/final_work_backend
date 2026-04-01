@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { SharedModule } from '../../shared/shared.module';
 import { AuthResolver } from './auth.resolver';
 import { TokenService } from '../../shared/token/token.service';
-import { UserProfile } from './entity/user_profile.entity';
+import { UserProfile } from '../user/entity/user_profile.entity';
 
 @Module({
     imports: [

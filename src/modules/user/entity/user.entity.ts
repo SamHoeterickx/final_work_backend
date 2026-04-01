@@ -4,8 +4,10 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserProgress } from './user_progress.entity';
 
 @ObjectType()
 @Entity('users')
@@ -32,6 +34,10 @@ export class User {
         default: UserRoleType.USER,
     })
     role: UserRoleType;
+
+    @Field(() => [UserProgress])
+    @OneToMany(() => UserProgress, (progress) => progress.user)
+    progress: UserProgress[];
 
     @Field(() => String, { nullable: true })
     @Column({ type: 'varchar', nullable: true })

@@ -12,6 +12,7 @@ import { AppResolver } from './app.resolver';
 import { type Request } from 'express';
 import { LessonModule } from './modules/lesson/lesson.module';
 import { ChapterModule } from './modules/chapter/chapter.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
     imports: [
@@ -47,6 +48,7 @@ import { ChapterModule } from './modules/chapter/chapter.module';
         SharedModule,
         LessonModule,
         ChapterModule,
+        UserModule,
     ],
     providers: [
         AppService,

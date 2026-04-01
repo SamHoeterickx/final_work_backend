@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chapter } from './entity/chapter.entity';
 import { Lesson } from '../lesson/entity/lesson.entity';
 import { AuthService } from '../auth/auth.service';
-import { User } from '../auth/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { TokenService } from 'src/shared/token/token.service';
 

@@ -6,7 +6,7 @@ import { Lesson } from './entity/lesson.entity';
 import { AuthModule } from '../auth/auth.module';
 import { TokenService } from 'src/shared/token/token.service';
 import { AuthService } from '../auth/auth.service';
-import { User } from '../auth/entity/user.entity';
+import { User } from '../user/entity/user.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Lesson, User]), AuthModule],
