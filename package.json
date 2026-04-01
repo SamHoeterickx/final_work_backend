@@ -39,6 +39,7 @@
         "cross-env": "^10.1.0",
         "dotenv": "^17.3.1",
         "graphql": "^16.13.2",
+        "graphql-type-json": "^0.3.2",
         "jsonwebtoken": "^9.0.3",
         "pg": "^8.20.0",
         "reflect-metadata": "^0.2.2",

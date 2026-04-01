@@ -1,6 +1,6 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { Lesson } from '../../lesson/entity/lesson.entity'
-import { TagOptions } from '../../../shared/types/types'
+import { Lesson } from '../../lesson/entity/lesson.entity';
+import { TagOptions } from '../../../shared/types/types';
 import {
     Column,
     CreateDateColumn,
@@ -28,7 +28,7 @@ export class Chapter {
     @Column({ type: 'int' })
     order: number;
 
-    @Field(() => TagOptions, { nullable: true })
+    @Field(() => [TagOptions], { nullable: true })
     @Column({
         type: 'enum',
         enum: TagOptions,

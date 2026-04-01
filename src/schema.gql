@@ -8,7 +8,7 @@ type Chapter {
   lessons: [Lesson!]!
   name: String!
   order: Int!
-  tags: TagOptions
+  tags: [TagOptions!]
   uuid: ID!
 }
 
@@ -25,9 +25,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Lesson {
   chapter: Chapter!
-  content: String!
+  content: JSON!
   created_at: DateTime!
   description: String!
   durationMinutes: Int!
@@ -60,6 +65,7 @@ input OnboardingInput {
 }
 
 type Query {
+  getAllChapters: [Chapter!]!
   getAllLessons: [Lesson!]!
   getHello: String!
   healthCheck: String!

@@ -1,6 +1,7 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
 import { Chapter } from "../../chapter/entity/chapter.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import GraphQLJSON from "graphql-type-json";
 
 @ObjectType()
 @Entity('lesson')
@@ -25,7 +26,7 @@ export class Lesson {
     @Column({ type: 'int', default: 1 })
     durationMinutes: number;
 
-    @Field(() => String)
+    @Field(() => GraphQLJSON)
     @Column({ type: 'jsonb', default: {} })
     content: Record<string, any>;
 
