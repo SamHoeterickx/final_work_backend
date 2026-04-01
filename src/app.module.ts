@@ -11,6 +11,7 @@ import { SharedModule } from './shared/shared.module';
 import { AppResolver } from './app.resolver';
 import { type Request } from 'express';
 import { LessonModule } from './modules/lesson/lesson.module';
+import { ChapterModule } from './modules/chapter/chapter.module';
 
 @Module({
     imports: [
@@ -45,6 +46,7 @@ import { LessonModule } from './modules/lesson/lesson.module';
         AuthModule,
         SharedModule,
         LessonModule,
+        ChapterModule,
     ],
     providers: [
         AppService,

@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Chapter {
+  created_at: DateTime!
+  description: String!
+  lessons: [Lesson!]!
+  name: String!
+  order: Int!
+  tags: TagOptions
+  uuid: ID!
+}
+
 input CreateUserDto {
   email: String!
   firstname: String!
@@ -16,6 +26,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Lesson {
+  chapter: Chapter!
   content: String!
   created_at: DateTime!
   description: String!
@@ -56,6 +67,10 @@ type Query {
 
 input RefreshTokenDto {
   refreshToken: String!
+}
+
+enum TagOptions {
+  TEST
 }
 
 type UserTokens {

@@ -1,5 +1,6 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Chapter } from "../../chapter/entity/chapter.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity('lesson')
@@ -36,6 +37,13 @@ export class Lesson {
         inverseJoinColumn: { name: 'lesson_id', referencedColumnName: 'uuid'}
     })
     prerequisites: Lesson[];
+
+    @Field(() => Chapter)
+    @ManyToOne(
+        () => Chapter,
+        (chapter) => chapter.lessons
+    )
+    chapter: Chapter;
 
     @Field()
     @CreateDateColumn()

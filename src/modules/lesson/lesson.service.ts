@@ -13,6 +13,9 @@ export class LessonService {
         try {
             const allLessons = await this.lessonRepository.find({
                 relations: ['prerequisites'],
+                order: {
+                    order: 'ASC',
+                },
             });
             if (!allLessons || allLessons.length === 0) {
                 throw new HttpException(

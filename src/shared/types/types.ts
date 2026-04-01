@@ -1,8 +1,22 @@
+import { registerEnumType } from '@nestjs/graphql';
+
+//===========================
+//==========ENUMS============
+//===========================
+
 export enum UserRoleType {
     ADMIN = 'ADMIN',
     USER = 'USER',
 }
 
+export enum TagOptions {
+    TEST = 'TEST_1',
+}
+registerEnumType(TagOptions, { name: 'TagOptions' });
+
+//===========================
+//==========TYPES============
+//===========================
 export interface IUserTokens {
     accessToken: string;
     refreshToken: string;
