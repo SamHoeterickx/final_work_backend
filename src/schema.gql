@@ -70,6 +70,7 @@ type Query {
   getAllChapters: [Chapter!]!
   getAllLessons: [Lesson!]!
   getChapterBySlug(slug: String!): Chapter!
+  getChapterByUuid(uuid: String!): Chapter!
   getHello: String!
   healthCheck: String!
 }

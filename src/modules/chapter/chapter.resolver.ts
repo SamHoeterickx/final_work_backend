@@ -15,10 +15,12 @@ export class ChapterResolver {
     }
 
     @Query(() => Chapter)
-    public getChapterBySlug(
-        @Args('slug') slug: string
-    ){
-        console.log(slug);
-        return this.chapterService.findBySlug(slug)
+    public async getChapterBySlug(@Args('slug') slug: string) {
+        return await this.chapterService.findBySlug(slug);
+    }
+
+    @Query(() => Chapter)
+    public async getChapterByUuid(@Args('uuid') uuid: string) {
+        return await this.chapterService.findByUuid(uuid);
     }
 }
