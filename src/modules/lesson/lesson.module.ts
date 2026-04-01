@@ -4,17 +4,12 @@ import { LessonResolver } from './lesson.resolver';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Lesson } from './entity/lesson.entity';
 import { AuthModule } from '../auth/auth.module';
-import { SharedModule } from 'src/shared/shared.module';
-import { ConfigModule } from '@nestjs/config';
 import { TokenService } from 'src/shared/token/token.service';
 import { AuthService } from '../auth/auth.service';
 import { User } from '../auth/entity/user.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([Lesson, User]),
-        AuthModule
-    ],
+    imports: [TypeOrmModule.forFeature([Lesson, User]), AuthModule],
     providers: [LessonService, LessonResolver, TokenService, AuthService],
 })
 export class LessonModule {}

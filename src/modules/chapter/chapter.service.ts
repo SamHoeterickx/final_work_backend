@@ -17,8 +17,8 @@ export class ChapterService {
                 order: {
                     order: 'ASC',
                     lessons: {
-                        order: 'ASC'
-                    }
+                        order: 'ASC',
+                    },
                 },
             });
             if (!allChapters || allChapters.length === 0) {
@@ -31,7 +31,7 @@ export class ChapterService {
             return allChapters;
         } catch (error) {
             throw new HttpException(
-                'Failed to fetch chapters',
+                `${error instanceof Error ? error.message : String(error)}`,
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }

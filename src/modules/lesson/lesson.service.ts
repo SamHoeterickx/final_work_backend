@@ -27,7 +27,7 @@ export class LessonService {
             return allLessons;
         } catch (error) {
             throw new HttpException(
-                'Failed to fetch lessons',
+                `${error instanceof Error ? error.message : String(error)}`,
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }

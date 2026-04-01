@@ -8,7 +8,7 @@ interface AuthenticatedRequest extends Request {
 
 /**
  * Get current user out of the request
- * 
+ *
  * @returns User
  */
 export const CurrentUser = createParamDecorator(

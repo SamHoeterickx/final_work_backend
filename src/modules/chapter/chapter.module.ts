@@ -4,9 +4,13 @@ import { ChapterService } from './chapter.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chapter } from './entity/chapter.entity';
 import { Lesson } from '../lesson/entity/lesson.entity';
+import { AuthService } from '../auth/auth.service';
+import { User } from '../auth/entity/user.entity';
+import { AuthModule } from '../auth/auth.module';
+import { TokenService } from 'src/shared/token/token.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Chapter, Lesson])],
-  providers: [ChapterResolver, ChapterService]
+    imports: [TypeOrmModule.forFeature([Chapter, Lesson, User]), AuthModule],
+    providers: [ChapterResolver, ChapterService, AuthService, TokenService],
 })
 export class ChapterModule {}

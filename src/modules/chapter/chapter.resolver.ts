@@ -1,16 +1,16 @@
 import { Query, Resolver } from '@nestjs/graphql';
 import { ChapterService } from './chapter.service';
 import { Chapter } from './entity/chapter.entity';
-
+import { GqlAuthGuard } from 'src/shared/guards/gqlAuth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver()
+@UseGuards(GqlAuthGuard)
 export class ChapterResolver {
-    constructor(
-        private chapterService: ChapterService
-    ){}
+    constructor(private chapterService: ChapterService) {}
 
     @Query(() => [Chapter])
-    public async getAllChapters(): Promise<Chapter[]>{
-        return await this.chapterService.findAll()
+    public async getAllChapters(): Promise<Chapter[]> {
+        return await this.chapterService.findAll();
     }
 }
