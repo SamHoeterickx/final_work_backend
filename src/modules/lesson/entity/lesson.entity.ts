@@ -24,6 +24,10 @@ export class Lesson {
 
     @Field()
     @Column()
+    slug: string;
+
+    @Field()
+    @Column()
     description: string;
 
     @Field(() => Int)
@@ -43,7 +47,7 @@ export class Lesson {
     @JoinTable({
         name: 'lesson_dependencies',
         joinColumn: { name: 'lesson_id', referencedColumnName: 'uuid' },
-        inverseJoinColumn: { name: 'lesson_id', referencedColumnName: 'uuid' },
+        inverseJoinColumn: { name: 'prerequisite_id', referencedColumnName: 'uuid' },
     })
     prerequisites: Lesson[];
 

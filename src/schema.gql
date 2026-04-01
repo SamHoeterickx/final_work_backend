@@ -8,6 +8,7 @@ type Chapter {
   lessons: [Lesson!]!
   name: String!
   order: Int!
+  slug: String!
   tags: [TagOptions!]
   uuid: ID!
 }
@@ -39,6 +40,7 @@ type Lesson {
   name: String!
   order: Int!
   prerequisites: [Lesson!]
+  slug: String!
   uuid: ID!
 }
 

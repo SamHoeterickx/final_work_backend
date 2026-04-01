@@ -22,6 +22,10 @@ export class Chapter {
 
     @Field()
     @Column()
+    slug: string;
+    
+    @Field()
+    @Column()
     description: string;
 
     @Field(() => Int)
