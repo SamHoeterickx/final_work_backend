@@ -13,13 +13,22 @@ export enum TagOptions {
     TEST = 'TEST_1',
 }
 registerEnumType(TagOptions, { name: 'TagOptions' });
+registerEnumType(TagOptions, { name: 'TagOptions' });
 
 export enum GetChapterOptionEnum {
     UUID = 'uuid',
     SLUG = 'slug',
-    NAME = 'name'
+    NAME = 'name',
 }
+registerEnumType(TagOptions, { name: 'GetChapterOptionEnum' });
 
+export enum ChapterFilterField {
+    NAME = 'name',
+    DESCRIPTION = 'description',
+    TAGS = 'tags',
+    SLUG = 'slug',
+}
+registerEnumType(ChapterFilterField, { name: 'ChapterFilterField' });
 
 //===========================
 //==========TYPES============

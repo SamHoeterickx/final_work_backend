@@ -9,8 +9,20 @@ type Chapter {
   name: String!
   order: Int!
   slug: String!
-  tags: [TagOptions!]
+  tags: [GetChapterOptionEnum!]
   uuid: ID!
+}
+
+input ChapterFieldInput {
+  option: ChapterFilterField!
+  value: String!
+}
+
+enum ChapterFilterField {
+  DESCRIPTION
+  NAME
+  SLUG
+  TAGS
 }
 
 input CreateUserDto {
@@ -29,6 +41,10 @@ scalar DateTime
 input GetChapterOption {
   option: String!
   value: String!
+}
+
+enum GetChapterOptionEnum {
+  TEST
 }
 
 """
@@ -75,16 +91,13 @@ type Query {
   getAllChapters: [Chapter!]!
   getAllLessons: [Lesson!]!
   getChapter(option: GetChapterOption!): Chapter!
+  getChaptersBy(option: ChapterFieldInput!): [Chapter!]!
   getHello: String!
   healthCheck: String!
 }
 
 input RefreshTokenDto {
   refreshToken: String!
-}
-
-enum TagOptions {
-  TEST
 }
 
 type User {

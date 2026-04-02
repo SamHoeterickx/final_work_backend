@@ -47,7 +47,10 @@ export class Lesson {
     @JoinTable({
         name: 'lesson_dependencies',
         joinColumn: { name: 'lesson_id', referencedColumnName: 'uuid' },
-        inverseJoinColumn: { name: 'prerequisite_id', referencedColumnName: 'uuid' },
+        inverseJoinColumn: {
+            name: 'prerequisite_id',
+            referencedColumnName: 'uuid',
+        },
     })
     prerequisites: Lesson[];
 
