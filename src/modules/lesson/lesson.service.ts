@@ -9,6 +9,14 @@ export class LessonService {
         @InjectRepository(Lesson) private lessonRepository: Repository<Lesson>,
     ) {}
 
+    /**
+     * Find all lessons
+     *
+     * @returns
+     * a Promise containing an array of al the found lessons
+     *
+     * @throws Erorr when there is no lesson found
+     */
     public async findAll(): Promise<Lesson[]> {
         try {
             const allLessons = await this.lessonRepository.find({

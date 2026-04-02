@@ -65,6 +65,10 @@ type Lesson {
   uuid: ID!
 }
 
+input LessonUuidInput {
+  uuid: String!
+}
+
 input LoginUserDto {
   email: String!
   password: String!
@@ -75,6 +79,7 @@ type Mutation {
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
   registerUser(input: CreateUserDto!): UserTokens!
+  updateLessonProgress(lessonUuid: LessonUuidInput!): UpdateLessonProgress!
 }
 
 input OnboardingInput {
@@ -98,6 +103,10 @@ type Query {
 
 input RefreshTokenDto {
   refreshToken: String!
+}
+
+type UpdateLessonProgress {
+  status: String!
 }
 
 type User {
