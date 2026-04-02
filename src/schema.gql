@@ -9,7 +9,7 @@ type Chapter {
   name: String!
   order: Int!
   slug: String!
-  tags: [GetChapterOptionEnum!]
+  tags: [TagOptions!]
   uuid: ID!
 }
 
@@ -41,10 +41,6 @@ scalar DateTime
 input GetChapterOption {
   option: String!
   value: String!
-}
-
-enum GetChapterOptionEnum {
-  TEST
 }
 
 """
@@ -103,6 +99,10 @@ type Query {
 
 input RefreshTokenDto {
   refreshToken: String!
+}
+
+enum TagOptions {
+  TEST
 }
 
 type UpdateLessonProgress {

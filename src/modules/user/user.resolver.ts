@@ -17,6 +17,9 @@ export class UserResolver {
         @Args('lessonUuid') lessonInput: LessonUuidInput,
         @CurrentUser() user: User,
     ) {
-        return await this.userService.updateLessonProgress(lessonInput.uuid, user.uuid);
+        return await this.userService.updateLessonProgress(
+            lessonInput.uuid,
+            user.uuid,
+        );
     }
 }
