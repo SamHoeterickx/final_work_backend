@@ -1,7 +1,6 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { IsEnum, IsNotEmpty, IsString } from "class-validator";
-import { FindUserField } from "src/shared/types/types";
-
+import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { FindUserField } from 'src/shared/types/types';
 
 @InputType()
 export class FindUserOption {

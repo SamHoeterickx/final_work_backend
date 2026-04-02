@@ -73,19 +73,22 @@ export class UserService {
                 value: chapterUuid,
             });
 
-            const user = await this.findUserBy({ option: FindUserField.UUID, value: userUuid});
+            const user = await this.findBy({
+                option: FindUserField.UUID,
+                value: userUuid,
+            });
 
             if (chapter) {
                 const chapterLessons: Lesson[] = chapter.lessons;
 
-                chapterLessons.forEach(async (lesson) => {
+                for (const lesson of chapterLessons) {
                     const nProgressEntry = this.userProgressRepository.create({
                         user,
                         lesson,
                     });
 
                     await this.userProgressRepository.save(nProgressEntry);
-                });
+                }
             }
         } catch (error) {
             throw new HttpException(
@@ -97,17 +100,17 @@ export class UserService {
 
     /**
      * Find user by findOption
-     * 
+     *
      * @param findOption - FindUserOption
      * - option: FindUserField 'uuid' | 'firstname' | 'email' | 'role'
      * - value: string
-     * 
+     *
      * @returns
      * a Promise containing a user
-     * 
+     *
      * @throws HttpException when user is not found
      */
-    private async findUserBy(findOption: FindUserOption): Promise<User> {
+    private async findBy(findOption: FindUserOption): Promise<User> {
         try {
             const { option, value } = findOption;
 
