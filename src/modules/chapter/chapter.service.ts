@@ -11,6 +11,14 @@ export class ChapterService {
         private chapterRepository: Repository<Chapter>,
     ) {}
 
+    /**
+     * Find all chapters
+     * 
+     * @returns 
+     * a Promise containing an array of all the chapters
+     * 
+     * @throws Error if there are no chapters found
+     */
     public async findAll(): Promise<Chapter[]> {
         try {
             const allChapters = await this.chapterRepository.find({
@@ -40,14 +48,14 @@ export class ChapterService {
 
     /**
      * Find a chapter based on the findOption
-     * 
+     *
      * @param findOption - GetChapterOption
      * - option: 'uuid' | 'slug' | 'name'
      * - value: string
-     * 
+     *
      * @returns
      * a Promise containing the found chapter
-     * 
+     *
      * @throws Error if there is no Chapter found with the given findOption
      */
     public async findBy(findOption: GetChapterOption): Promise<Chapter> {
@@ -56,7 +64,7 @@ export class ChapterService {
 
             const chapter = await this.chapterRepository.findOne({
                 where: {
-                    [option]: value
+                    [option]: value,
                 },
                 relations: ['lessons'],
                 order: {
