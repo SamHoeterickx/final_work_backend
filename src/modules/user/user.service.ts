@@ -17,6 +17,10 @@ export class UserService {
         private chapterService: ChapterService,
     ) {}
 
+    // ------------------------------
+    // --- USERPROGRESS FUNCTIONS ---
+    // ------------------------------
+
     /** Update Progress status of user for a specific lesson
      *
      * @param lessionUuid: string uuid of the lesson
@@ -97,6 +101,28 @@ export class UserService {
             );
         }
     }
+
+    public async findUserProgress(lessionUuid: string, userUuid: string): Promise<boolean> {
+        try {
+            const uProgress = await this.userProgressRepository.findOne({
+                where: {
+                    lesson: { uuid: lessionUuid },
+                    user: { uuid: userUuid },
+                },
+            });
+
+            return uProgress ? uProgress.isCompleted : false;
+        } catch (error) {
+            throw new HttpException(
+                `${error instanceof Error ? error.message : String(error)}`,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    // ----------------------
+    // --- USER FUNCTIONS ---
+    // ----------------------
 
     /**
      * Find user by findOption

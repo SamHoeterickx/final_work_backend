@@ -58,6 +58,12 @@ export class Lesson {
     @ManyToOne(() => Chapter, (chapter) => chapter.lessons)
     chapter: Chapter;
 
+    @Field(() => Boolean, { nullable: true })
+    isCompleted: boolean;
+
+    @Field(() => Boolean, { nullable: true })
+    isUnlocked: boolean;
+
     @Field()
     @CreateDateColumn()
     created_at: Date;

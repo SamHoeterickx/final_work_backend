@@ -12,5 +12,6 @@ import { TokenService } from 'src/shared/token/token.service';
 @Module({
     imports: [TypeOrmModule.forFeature([Chapter, Lesson, User]), AuthModule],
     providers: [ChapterResolver, ChapterService, AuthService, TokenService],
+    exports: [ChapterService],
 })
 export class ChapterModule {}

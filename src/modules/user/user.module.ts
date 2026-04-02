@@ -8,7 +8,6 @@ import { UserProgress } from './entity/user_progress.entity';
 import { TokenService } from 'src/shared/token/token.service';
 import { AuthService } from '../auth/auth.service';
 import { Lesson } from '../lesson/entity/lesson.entity';
-import { ChapterService } from '../chapter/chapter.service';
 import { ChapterModule } from '../chapter/chapter.module';
 import { Chapter } from '../chapter/entity/chapter.entity';
 
@@ -23,12 +22,7 @@ import { Chapter } from '../chapter/entity/chapter.entity';
         ]),
         ChapterModule,
     ],
-    providers: [
-        UserResolver,
-        UserService,
-        TokenService,
-        AuthService,
-        ChapterService,
-    ],
+    providers: [UserResolver, UserService, TokenService, AuthService],
+    exports: [UserService],
 })
 export class UserModule {}

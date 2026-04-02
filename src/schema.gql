@@ -54,6 +54,8 @@ type Lesson {
   created_at: DateTime!
   description: String!
   durationMinutes: Int!
+  isCompleted: Boolean
+  isUnlocked: Boolean
   name: String!
   order: Int!
   prerequisites: [Lesson!]
