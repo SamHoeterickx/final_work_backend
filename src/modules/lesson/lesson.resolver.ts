@@ -26,7 +26,9 @@ export class LessonResolver {
         @CurrentUser() user: User,
     ): Promise<boolean> {
         if (!user) return false;
-        return await this.userService.findUserProgress(lesson.uuid, user.uuid);
+        const uProgress = await this.userService.findUserProgress(lesson.uuid, user.uuid);
+
+        return uProgress ? uProgress.isCompleted : false;
     }
 
     @ResolveField(() => Boolean)

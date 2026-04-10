@@ -102,7 +102,10 @@ export class UserService {
         }
     }
 
-    public async findUserProgress(lessionUuid: string, userUuid: string): Promise<boolean> {
+    public async findUserProgress(
+        lessionUuid: string,
+        userUuid: string,
+    ): Promise<UserProgress | null> {
         try {
             const uProgress = await this.userProgressRepository.findOne({
                 where: {
@@ -111,7 +114,7 @@ export class UserService {
                 },
             });
 
-            return uProgress ? uProgress.isCompleted : false;
+            return uProgress
         } catch (error) {
             throw new HttpException(
                 `${error instanceof Error ? error.message : String(error)}`,
