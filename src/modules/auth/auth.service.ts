@@ -230,6 +230,14 @@ export class AuthService {
         }
     }
 
+    /**
+     * Reset password with old password
+     * @param input 
+     * - oldPassword: string
+     * - newPassword: string
+     * - repeatNewPassword: string,
+     * @param uuid : uuid of current user
+     */
     public async resetPassword(input: ResetPasswordDto, uuid: string): Promise<IUserTokens> {
         const { oldPassword, newPassword, repeatNewPassword } = input; 
         try{
@@ -271,6 +279,13 @@ export class AuthService {
 
     }
 
+    /**
+     * Reset password with code when original password is forgotten
+     * @param input 
+     * - email: string
+     * - code: string
+     * - newPassword: string
+     */
     public async resetPasswordWithCode(input: ResetPasswordWithCodeDto): Promise<UserTokens> {
         const { email, resetCode, newPassword } = input;
         try{
@@ -311,6 +326,11 @@ export class AuthService {
         }
     }
 
+    /**
+     * Request code to generate new password when original password is forgotten
+     * @param input 
+     * - email: string
+     */
     public async requestForgotPassword(input: ForgotPasswordRequestDto){
         const { email } = input
         try{
