@@ -281,12 +281,28 @@ export class AuthService {
             if(!eUser){
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
+
+            const gPasswordResetCode = this.generateRequestPasswordCode();
             
-            console.log('Request send');
+            const expires = new Date();
+            expires.setMinutes(expires.getMinutes() + 15); // De code vervalt na 15 minuten
+
+            await this.authRepository.update(eUser.uuid, {
+                passwordResetCode: gPasswordResetCode,
+                passwordResetExpires: expires
+            })
+            console.log(gPasswordResetCode);
+            
             await this.resendService.sendEmail({
-                reciever: 'samhoeterickx111@gmail.com',
-                message: 'Request password change',
-                subject: 'Request forgot password'
+                reciever: eUser.email,
+                subject: 'Request forgot password',
+                message: `
+                    <h2>Password Reset Request</h2>
+                    <p>Hi ${eUser.firstname},</p>
+                    <p>We received a request to reset your password. Please enter the following code in the app to set a new password:</p>
+                    <h3 style="background: #f4f4f4; padding: 10px; display: inline-block; letter-spacing: 2px;">${gPasswordResetCode}</h3>
+                    <p>If you didn't request this, you can safely ignore this email.</p>
+                `,
             })
 
             return 'Request send'
@@ -300,6 +316,15 @@ export class AuthService {
                 `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
             );
         }
+    }
+
+    private generateRequestPasswordCode(): string {
+        const code: number[] = [];
+        for(let i = 0; i < 8; i++ ){
+            const nEntry = Math.floor(Math.random() * 10);
+            code.push(nEntry);
+        }
+        return code.join('');
     }
 
     /**

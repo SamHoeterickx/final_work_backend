@@ -33,6 +33,12 @@ export class User {
     })
     role: UserRoleType;
 
+    @Column({ type: 'varchar', nullable: true})
+    passwordResetCode: string | null;
+
+    @Column({ type: 'timestamp', nullable: true })
+    passwordResetExpires: Date | null;
+
     @Field(() => String, { nullable: true })
     @Column({ type: 'varchar', nullable: true })
     currentHashedRefreshToken: string | null;
