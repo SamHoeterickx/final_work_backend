@@ -18,6 +18,8 @@ import { UserProfile } from './entity/user_profile.entity';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
 import { ResendService } from '../resend/resend.service';
+import { ResetPasswordWithCodeDto } from './dto/resetPasswordWithCode.dto';
+import { UserTokens } from './models/user-tokens.model';
 
 @Injectable()
 export class AuthService {
@@ -267,6 +269,46 @@ export class AuthService {
             );
         }
 
+    }
+
+    public async resetPasswordWithCode(input: ResetPasswordWithCodeDto): Promise<UserTokens> {
+        const { email, resetCode, newPassword } = input;
+        try{
+            const eUser = await this.authRepository.findOne({
+                where: {
+                    email
+                }
+            })
+            if (!eUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+
+            if (
+                resetCode !== eUser.passwordResetCode || 
+                !eUser.passwordResetExpires || 
+                new Date() > eUser.passwordResetExpires
+            ) {
+                throw new HttpException('Invalid or expired reset code', HttpStatus.BAD_REQUEST);
+            }
+
+            const hPassword = await this.hashPassword(newPassword);
+
+            await this.authRepository.update(eUser.uuid, {
+                password: hPassword,
+                passwordResetCode: null,
+                passwordResetExpires: null
+            });
+
+            return await this.generateNewTokens(eUser.uuid)
+        } catch(error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to reset password: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
     }
 
     public async requestForgotPassword(input: ForgotPasswordRequestDto){
