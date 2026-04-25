@@ -8,7 +8,7 @@ import {
     ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { OnboardingInput } from './OnboardingInput.dto';
+import { OnboardingInput } from './onboardingInput.dto';
 
 @InputType()
 export class CreateUserDto {

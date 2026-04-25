@@ -8,6 +8,7 @@ import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
 import { User } from './entity/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -43,5 +44,14 @@ export class AuthResolver {
     @UseGuards(GqlAuthGuard)
     public async logOut(@CurrentUser() user: User): Promise<boolean> {
         return this.authService.logout(user.uuid);
+    }
+
+    @Mutation(() => UserTokens)
+    @UseGuards(GqlAuthGuard)
+    public async resetPassword(
+        @CurrentUser() user: User,
+        @Args('input') input: ResetPasswordDto
+    ): Promise<UserTokens>{
+        return await this.authService.resetPassword(input, user.uuid);
     }
 }

@@ -20,6 +20,7 @@ type Mutation {
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
   registerUser(input: CreateUserDto!): UserTokens!
+  resetPassword(input: ResetPasswordDto!): UserTokens!
 }
 
 input OnboardingInput {
@@ -39,6 +40,12 @@ type Query {
 
 input RefreshTokenDto {
   refreshToken: String!
+}
+
+input ResetPasswordDto {
+  newPassword: String!
+  oldPassword: String!
+  repeatNewPassword: String!
 }
 
 type UserTokens {

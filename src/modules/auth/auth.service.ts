@@ -15,6 +15,7 @@ import { IUserTokens } from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
+import { ResetPasswordDto } from './dto/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -222,6 +223,47 @@ export class AuthService {
                 HttpStatus.UNAUTHORIZED,
             );
         }
+    }
+
+    public async resetPassword(input: ResetPasswordDto, uuid: string): Promise<IUserTokens> {
+        const { oldPassword, newPassword, repeatNewPassword } = input; 
+        try{
+            if (newPassword !== repeatNewPassword) {
+                throw new HttpException('Passwords do not match', HttpStatus.BAD_REQUEST);
+            }
+
+            const eUser = await this.authRepository.findOne({
+                where: {
+                    uuid: uuid,
+                }
+            });
+            if (!eUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+
+            const isMatch = await this.comparePasswords(oldPassword, eUser.password);
+            if (!isMatch) {
+                throw new HttpException('Invalid old password', HttpStatus.UNAUTHORIZED);
+            }
+
+            const hPassword = await this.hashPassword(newPassword);
+
+            await this.authRepository.update(uuid, {
+                password: hPassword
+            })
+
+            return await this.generateNewTokens(eUser.uuid);
+
+        }catch(error: unknown){
+            console.error(error);
+            if(error instanceof HttpException){
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to reset password: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+
     }
 
     /**
