@@ -9,6 +9,7 @@ import { User } from './entity/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
 
 @Resolver()
 export class AuthResolver {
@@ -53,5 +54,12 @@ export class AuthResolver {
         @Args('input') input: ResetPasswordDto
     ): Promise<UserTokens>{
         return await this.authService.resetPassword(input, user.uuid);
+    }
+
+    @Mutation(() => String)
+    public async forgotPasswordRequest(
+        @Args('input') input: ForgotPasswordRequestDto,
+    ){
+        return this.authService.requestForgotPassword(input);
     }
 }

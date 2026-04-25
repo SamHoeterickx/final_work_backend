@@ -16,6 +16,8 @@ import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
+import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
+import { ResendService } from '../resend/resend.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +27,7 @@ export class AuthService {
         @InjectRepository(User) private authRepository: Repository<User>,
         private configService: ConfigService,
         private tokenService: TokenService,
+        private resendService: ResendService
     ) {
         const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)
@@ -264,6 +267,39 @@ export class AuthService {
             );
         }
 
+    }
+
+    public async requestForgotPassword(input: ForgotPasswordRequestDto){
+        const { email } = input
+        try{
+            const eUser = await this.authRepository.findOne({
+                where: {
+                    email
+                }
+            });
+
+            if(!eUser){
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+            
+            console.log('Request send');
+            await this.resendService.sendEmail({
+                reciever: 'samhoeterickx111@gmail.com',
+                message: 'Request password change',
+                subject: 'Request forgot password'
+            })
+
+            return 'Request send'
+
+        }catch(error: unknown){
+            console.error(error);
+            if(error instanceof HttpException){
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
     }
 
     /**

@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { AppResolver } from './app.resolver';
 import { type Request } from 'express';
+import { ResendService } from './modules/resend/resend.service';
 
 @Module({
     imports: [
@@ -53,6 +54,7 @@ import { type Request } from 'express';
             }),
         },
         AppResolver,
+        ResendService,
     ],
 })
 export class AppModule {}

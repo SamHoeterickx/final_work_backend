@@ -7,6 +7,7 @@ import { SharedModule } from '../../shared/shared.module';
 import { AuthResolver } from './auth.resolver';
 import { TokenService } from '../../shared/token/token.service';
 import { UserProfile } from './entity/user_profile.entity';
+import { ResendService } from '../resend/resend.service';
 
 @Module({
     imports: [
@@ -14,6 +15,6 @@ import { UserProfile } from './entity/user_profile.entity';
         ConfigModule,
         SharedModule,
     ],
-    providers: [AuthService, AuthResolver, TokenService],
+    providers: [AuthService, AuthResolver, TokenService, ResendService],
 })
 export class AuthModule {}

@@ -17,3 +17,8 @@ export interface IOnboardingData {
     currentMethodes: string[] | null;
     extraGear: string[] | null;
 }
+export interface IEmailOptions {
+    reciever: string;
+    message: string;
+    subject: string;
+}

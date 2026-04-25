@@ -10,12 +10,17 @@ input CreateUserDto {
   repeatPassword: String!
 }
 
+input ForgotPasswordRequestDto {
+  email: String!
+}
+
 input LoginUserDto {
   email: String!
   password: String!
 }
 
 type Mutation {
+  forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
   logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
