@@ -15,8 +15,8 @@ export class CreateUserDto {
     @Field()
     @IsString()
     @IsNotEmpty()
-    @MinLength(1, { message: 'Firstname is too short' })
-    firstname: string;
+    @MinLength(1, { message: 'Name is too short' })
+    name: string;
 
     @Field()
     @IsEmail()

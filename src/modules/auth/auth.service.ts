@@ -69,7 +69,7 @@ export class AuthService {
     }
 
     public async createNewUser(body: CreateUserDto): Promise<IUserTokens> {
-        const { firstname, email, password, repeatPassword, onboarding } = body;
+        const { name, email, password, repeatPassword, onboarding } = body;
 
         try {
             if (password !== repeatPassword) {
@@ -91,7 +91,7 @@ export class AuthService {
             const result = await this.authRepository.manager.transaction(
                 async (manager) => {
                     const newUser = manager.create(User, {
-                        firstname,
+                        name,
                         email,
                         password: hPassword,
                     });
@@ -360,7 +360,7 @@ export class AuthService {
                 subject: 'Request forgot password',
                 message: `
                     <h2>Password Reset Request</h2>
-                    <p>Hi ${eUser.firstname},</p>
+                    <p>Hi ${eUser.name},</p>
                     <p>We received a request to reset your password. Please enter the following code in the app to set a new password:</p>
                     <h3 style="background: #f4f4f4; padding: 10px; display: inline-block; letter-spacing: 2px;">${gPasswordResetCode}</h3>
                     <p>If you didn't request this, you can safely ignore this email.</p>

@@ -4,7 +4,7 @@
 
 input CreateUserDto {
   email: String!
-  firstname: String!
+  name: String!
   onboarding: OnboardingInput!
   password: String!
   repeatPassword: String!
