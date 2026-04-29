@@ -1,5 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString, Length, Matches, MaxLength, MinLength } from "class-validator";
 
 @InputType()
 export class ResetPasswordWithCodeDto {
@@ -10,8 +10,7 @@ export class ResetPasswordWithCodeDto {
 
     @Field()
     @IsString()
-    @MinLength(8, { message: 'Code is too short'})
-    @MaxLength(8, { message: 'Code is too long'})
+    @Length(8)
     resetCode: string;
 
     @Field()
@@ -22,4 +21,13 @@ export class ResetPasswordWithCodeDto {
         message: 'password too weak',
     })
     newPassword: string;
+
+    @Field()
+    @IsString()
+    @IsNotEmpty()
+    @MinLength(8, { message: 'Password is too short' })
+    @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
+        message: 'password too weak',
+    })
+    repeatNewPassword: string;
 }

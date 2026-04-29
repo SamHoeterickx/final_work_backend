@@ -20,6 +20,7 @@ import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
 import { ResendService } from '../resend/resend.service';
 import { ResetPasswordWithCodeDto } from './dto/resetPasswordWithCode.dto';
 import { UserTokens } from './models/user-tokens.model';
+import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
 
 @Injectable()
 export class AuthService {
@@ -287,7 +288,7 @@ export class AuthService {
      * - newPassword: string
      */
     public async resetPasswordWithCode(input: ResetPasswordWithCodeDto): Promise<UserTokens> {
-        const { email, resetCode, newPassword } = input;
+        const { email, resetCode, newPassword, repeatNewPassword } = input;
         try{
             const eUser = await this.authRepository.findOne({
                 where: {
@@ -304,6 +305,10 @@ export class AuthService {
                 new Date() > eUser.passwordResetExpires
             ) {
                 throw new HttpException('Invalid or expired reset code', HttpStatus.BAD_REQUEST);
+            }
+
+            if(newPassword !== repeatNewPassword){
+                throw new HttpException('Passwords do not match', HttpStatus.BAD_REQUEST);
             }
 
             const hPassword = await this.hashPassword(newPassword);
@@ -378,6 +383,38 @@ export class AuthService {
                 `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
             );
         }
+    }
+
+    public async verifyPasswordResetCode(input: VerifyPasswordResetCodeDto): Promise<boolean> {
+        const { email, resetCode } = input
+        try{
+            const eUser = await this.authRepository.findOne({
+                where: {
+                    email
+                }
+            })
+            if (!eUser) {
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            }
+
+            if (
+                resetCode !== eUser.passwordResetCode || 
+                !eUser.passwordResetExpires || 
+                new Date() > eUser.passwordResetExpires
+            ) {
+                throw new HttpException('Invalid or expired reset code', HttpStatus.BAD_REQUEST);
+            }
+
+            return true
+        }catch(error: unknown){
+            console.error(error);
+            if(error instanceof HttpException){
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
+            );
+        } 
     }
 
     private generateRequestPasswordCode(): string {

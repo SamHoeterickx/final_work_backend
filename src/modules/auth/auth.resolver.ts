@@ -11,6 +11,7 @@ import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
 import { ResetPasswordWithCodeDto } from './dto/resetPasswordWithCode.dto';
+import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -62,6 +63,13 @@ export class AuthResolver {
         @Args('input') input: ForgotPasswordRequestDto,
     ){
         return this.authService.requestForgotPassword(input);
+    }
+
+    @Mutation(() => Boolean)
+    public async verifyPasswordResetCode (
+        @Args('input') input: VerifyPasswordResetCodeDto,
+    ) {
+        return await this.authService.verifyPasswordResetCode(input);
     }
 
     @Mutation(() => UserTokens)

@@ -27,6 +27,7 @@ type Mutation {
   registerUser(input: CreateUserDto!): UserTokens!
   resetPassword(input: ResetPasswordDto!): UserTokens!
   resetPasswordWithCode(input: ResetPasswordWithCodeDto!): UserTokens!
+  verifyPasswordResetCode(input: VerifyPasswordResetCodeDto!): Boolean!
 }
 
 input OnboardingInput {
@@ -57,10 +58,16 @@ input ResetPasswordDto {
 input ResetPasswordWithCodeDto {
   email: String!
   newPassword: String!
+  repeatNewPassword: String!
   resetCode: String!
 }
 
 type UserTokens {
   accessToken: String!
   refreshToken: String!
+}
+
+input VerifyPasswordResetCodeDto {
+  email: String!
+  resetCode: String!
 }
