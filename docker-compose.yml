@@ -13,3 +13,15 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
+  fw_nestjs_backend:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app/src
+      - /app/node_modules
+    ports:
+      - "8080:8080"
+    command: npm run dev
+    depends_on:
+      - fw_postgres_db
