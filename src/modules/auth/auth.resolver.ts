@@ -53,20 +53,20 @@ export class AuthResolver {
     @UseGuards(GqlAuthGuard)
     public async resetPassword(
         @CurrentUser() user: User,
-        @Args('input') input: ResetPasswordDto
-    ): Promise<UserTokens>{
+        @Args('input') input: ResetPasswordDto,
+    ): Promise<UserTokens> {
         return await this.authService.resetPassword(input, user.uuid);
     }
 
     @Mutation(() => String)
     public async forgotPasswordRequest(
         @Args('input') input: ForgotPasswordRequestDto,
-    ){
+    ) {
         return this.authService.requestForgotPassword(input);
     }
 
     @Mutation(() => Boolean)
-    public async verifyPasswordResetCode (
+    public async verifyPasswordResetCode(
         @Args('input') input: VerifyPasswordResetCodeDto,
     ) {
         return await this.authService.verifyPasswordResetCode(input);
@@ -74,8 +74,8 @@ export class AuthResolver {
 
     @Mutation(() => UserTokens)
     public async resetPasswordWithCode(
-        @Args('input') input: ResetPasswordWithCodeDto
-    ): Promise<UserTokens>{
+        @Args('input') input: ResetPasswordWithCodeDto,
+    ): Promise<UserTokens> {
         return await this.authService.resetPasswordWithCode(input);
     }
 }

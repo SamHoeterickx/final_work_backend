@@ -30,7 +30,7 @@ export class AuthService {
         @InjectRepository(User) private authRepository: Repository<User>,
         private configService: ConfigService,
         private tokenService: TokenService,
-        private resendService: ResendService
+        private resendService: ResendService,
     ) {
         const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)
@@ -233,82 +233,100 @@ export class AuthService {
 
     /**
      * Reset password with old password
-     * @param input 
+     * @param input
      * - oldPassword: string
      * - newPassword: string
      * - repeatNewPassword: string,
      * @param uuid : uuid of current user
      */
-    public async resetPassword(input: ResetPasswordDto, uuid: string): Promise<IUserTokens> {
-        const { oldPassword, newPassword, repeatNewPassword } = input; 
-        try{
+    public async resetPassword(
+        input: ResetPasswordDto,
+        uuid: string,
+    ): Promise<IUserTokens> {
+        const { oldPassword, newPassword, repeatNewPassword } = input;
+        try {
             if (newPassword !== repeatNewPassword) {
-                throw new HttpException('Passwords do not match', HttpStatus.BAD_REQUEST);
+                throw new HttpException(
+                    'Passwords do not match',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
 
             const eUser = await this.authRepository.findOne({
                 where: {
                     uuid: uuid,
-                }
+                },
             });
             if (!eUser) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
 
-            const isMatch = await this.comparePasswords(oldPassword, eUser.password);
+            const isMatch = await this.comparePasswords(
+                oldPassword,
+                eUser.password,
+            );
             if (!isMatch) {
-                throw new HttpException('Invalid old password', HttpStatus.UNAUTHORIZED);
+                throw new HttpException(
+                    'Invalid old password',
+                    HttpStatus.UNAUTHORIZED,
+                );
             }
 
             const hPassword = await this.hashPassword(newPassword);
 
             await this.authRepository.update(uuid, {
-                password: hPassword
-            })
+                password: hPassword,
+            });
 
             return await this.generateNewTokens(eUser.uuid);
-
-        }catch(error: unknown){
+        } catch (error: unknown) {
             console.error(error);
-            if(error instanceof HttpException){
+            if (error instanceof HttpException) {
                 throw error;
             }
             throw new InternalServerErrorException(
                 `Failed to reset password: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
-
     }
 
     /**
      * Reset password with code when original password is forgotten
-     * @param input 
+     * @param input
      * - email: string
      * - code: string
      * - newPassword: string
      */
-    public async resetPasswordWithCode(input: ResetPasswordWithCodeDto): Promise<UserTokens> {
+    public async resetPasswordWithCode(
+        input: ResetPasswordWithCodeDto,
+    ): Promise<UserTokens> {
         const { email, resetCode, newPassword, repeatNewPassword } = input;
-        try{
+        try {
             const eUser = await this.authRepository.findOne({
                 where: {
-                    email
-                }
-            })
+                    email,
+                },
+            });
             if (!eUser) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
 
             if (
-                resetCode !== eUser.passwordResetCode || 
-                !eUser.passwordResetExpires || 
+                resetCode !== eUser.passwordResetCode ||
+                !eUser.passwordResetExpires ||
                 new Date() > eUser.passwordResetExpires
             ) {
-                throw new HttpException('Invalid or expired reset code', HttpStatus.BAD_REQUEST);
+                throw new HttpException(
+                    'Invalid or expired reset code',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
 
-            if(newPassword !== repeatNewPassword){
-                throw new HttpException('Passwords do not match', HttpStatus.BAD_REQUEST);
+            if (newPassword !== repeatNewPassword) {
+                throw new HttpException(
+                    'Passwords do not match',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
 
             const hPassword = await this.hashPassword(newPassword);
@@ -316,50 +334,50 @@ export class AuthService {
             await this.authRepository.update(eUser.uuid, {
                 password: hPassword,
                 passwordResetCode: null,
-                passwordResetExpires: null
+                passwordResetExpires: null,
             });
 
-            return await this.generateNewTokens(eUser.uuid)
-        } catch(error: unknown) {
+            return await this.generateNewTokens(eUser.uuid);
+        } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
                 throw error;
             }
             throw new InternalServerErrorException(
-                `Failed to reset password: ${error instanceof Error ? error.message : String(error)}`
+                `Failed to reset password: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }
 
     /**
      * Request code to generate new password when original password is forgotten
-     * @param input 
+     * @param input
      * - email: string
      */
-    public async requestForgotPassword(input: ForgotPasswordRequestDto){
-        const { email } = input
-        try{
+    public async requestForgotPassword(input: ForgotPasswordRequestDto) {
+        const { email } = input;
+        try {
             const eUser = await this.authRepository.findOne({
                 where: {
-                    email
-                }
+                    email,
+                },
             });
 
-            if(!eUser){
+            if (!eUser) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
 
             const gPasswordResetCode = this.generateRequestPasswordCode();
-            
+
             const expires = new Date();
             expires.setMinutes(expires.getMinutes() + 15); // De code vervalt na 15 minuten
 
             await this.authRepository.update(eUser.uuid, {
                 passwordResetCode: gPasswordResetCode,
-                passwordResetExpires: expires
-            })
+                passwordResetExpires: expires,
+            });
             console.log(gPasswordResetCode);
-            
+
             await this.resendService.sendEmail({
                 reciever: eUser.email,
                 subject: 'Request forgot password',
@@ -370,56 +388,60 @@ export class AuthService {
                     <h3 style="background: #f4f4f4; padding: 10px; display: inline-block; letter-spacing: 2px;">${gPasswordResetCode}</h3>
                     <p>If you didn't request this, you can safely ignore this email.</p>
                 `,
-            })
+            });
 
-            return 'Request send'
-
-        }catch(error: unknown){
+            return 'Request send';
+        } catch (error: unknown) {
             console.error(error);
-            if(error instanceof HttpException){
+            if (error instanceof HttpException) {
                 throw error;
             }
             throw new InternalServerErrorException(
-                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
+                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }
 
-    public async verifyPasswordResetCode(input: VerifyPasswordResetCodeDto): Promise<boolean> {
-        const { email, resetCode } = input
-        try{
+    public async verifyPasswordResetCode(
+        input: VerifyPasswordResetCodeDto,
+    ): Promise<boolean> {
+        const { email, resetCode } = input;
+        try {
             const eUser = await this.authRepository.findOne({
                 where: {
-                    email
-                }
-            })
+                    email,
+                },
+            });
             if (!eUser) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
 
             if (
-                resetCode !== eUser.passwordResetCode || 
-                !eUser.passwordResetExpires || 
+                resetCode !== eUser.passwordResetCode ||
+                !eUser.passwordResetExpires ||
                 new Date() > eUser.passwordResetExpires
             ) {
-                throw new HttpException('Invalid or expired reset code', HttpStatus.BAD_REQUEST);
+                throw new HttpException(
+                    'Invalid or expired reset code',
+                    HttpStatus.BAD_REQUEST,
+                );
             }
 
-            return true
-        }catch(error: unknown){
+            return true;
+        } catch (error: unknown) {
             console.error(error);
-            if(error instanceof HttpException){
+            if (error instanceof HttpException) {
                 throw error;
             }
             throw new InternalServerErrorException(
-                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`
+                `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`,
             );
-        } 
+        }
     }
 
     private generateRequestPasswordCode(): string {
         const code: number[] = [];
-        for(let i = 0; i < 8; i++ ){
+        for (let i = 0; i < 8; i++) {
             const nEntry = Math.floor(Math.random() * 10);
             code.push(nEntry);
         }
