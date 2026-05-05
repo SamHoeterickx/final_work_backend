@@ -1,8 +1,11 @@
-import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
-import { IEmailOptions } from 'src/shared/types/types';
-
+import { IEmailOptions } from '../../shared/types/types';
 
 @Injectable()
 export class ResendService {

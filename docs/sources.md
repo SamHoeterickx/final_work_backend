@@ -1,0 +1,10 @@
+# BRONNENLIJST
+- [NestJs Docs](https://docs.nestjs.com/)
+- [GraphQL Docs](https://graphql.org/)
+- [NestJs with GraphQL](https://docs.nestjs.com/graphql/quick-start)
+- [Udemy cursus NestJs](https://www.udemy.com/course/nestjs-the-complete-developers-guide)
+- [Aikido safe-chain](https://github.com/AikidoSec/safe-chain)
+- [Dockerize NestJs](https://docs.nestjs.com/deployment)
+- [Dockerize NestJs](https://gist.github.com/mjex11/c13799fb1c6f8edc50b5f8246a54cff2)
+- [Dockerize NestJs](https://dev.to/code42cate/how-to-dockerize-nestjs-327j)
+- [Resend mail service](https://resend.com/)
