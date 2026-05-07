@@ -11,6 +11,8 @@ import { SharedModule } from './shared/shared.module';
 import { AppResolver } from './app.resolver';
 import { type Request } from 'express';
 import { ResendService } from './modules/resend/resend.service';
+import { ChaptersModule } from './modules/chapters/chapters.module';
+import { LessonsModule } from './modules/lessons/lessons.module';
 
 @Module({
     imports: [
@@ -44,6 +46,8 @@ import { ResendService } from './modules/resend/resend.service';
         }),
         AuthModule,
         SharedModule,
+        ChaptersModule,
+        LessonsModule,
     ],
     providers: [
         AppService,

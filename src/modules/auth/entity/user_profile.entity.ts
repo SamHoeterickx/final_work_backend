@@ -41,7 +41,7 @@ export class UserProfile {
     @Column({ type: 'jsonb', nullable: true })
     fullOnboardingData: IOnboardingData | null;
 
-    @OneToOne(() => User)
+    @OneToOne(() => User, { onDelete: 'CASCADE' })
     @JoinColumn()
     user: User;
 

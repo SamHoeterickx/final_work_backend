@@ -22,3 +22,10 @@ export interface IEmailOptions {
     message: string;
     subject: string;
 }
+
+export enum EProgressStatus {
+    LOCKED = 'locked',
+    UNLOCKED = 'unlocked',
+    INPROGRESS = 'in_progress',
+    COMPLETED = 'completed'
+}

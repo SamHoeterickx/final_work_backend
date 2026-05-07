@@ -1,0 +1,51 @@
+2d112ff Merge remote-tracking branch 'origin/feature/BE-05--track-user-progress'
+93a3822 Merge remote-tracking branch 'origin/feature/BE-04--get-chapter'
+7e747de Merge remote-tracking branch 'origin/feature/BE-03--add-user-modules'
+a8b4a72 fix: imports after docker
+5ececde Merge branch 'feature/BE-02--add-chapter-modules'
+3691fa1 Merge pull request #2 from SamHoeterickx/feature/BE-07--add-docker
+b06ab15 fix: lint
+a029da4 feat: dockerized backend
+bf584c3 feat: updated readme
+7d442d3 feat: verify reset code for forgot password
+5733daa feat: renamed firstName to name
+a52c785 docs: documented reset functions
+84351e6 feat: added reset password with code
+2aa8edd feat: added generated code for resetting the password
+f7eb7a8 feat: added resend to send forgot request mail
+1295379 feat: added reset password option
+bd213a6 feat: update CORS settings and enhance user progress retrieval logic
+8402819 feat: added isComplete and isUnlocked resolve fields for a lesson
+b2a37ab feat: fix async on forEach not working
+4e7bedb feat: added createUserProgressNewChapter and findBy for user
+04f3530 feat: update progress of user for a lesson
+fe3f2eb feat: added findAllBy
+a728bdf docs: added docs
+c7f701e docs: added documentation for findBy
+5e3f71c feat: refactor find to fit for more options
+a792cb6 feat: find chapter by uuid
+3dc2157 feat: find chapter by slug
+9e38692 feat: added slug to chapter and lesson
+54bc58f feat: added user progress
+3e48195 feat: added GqlAuthGuard to chapter endpoints
+182d23d feat: added getAllChapters query
+6891758 feat: added chapter entity and updated lesson entity
+35ff3d8 feat: added GqlAuthGuard for lesson endpoint
+30233be feat: created base for lesson endpoints
+4deb809 Merge pull request #1 from SamHoeterickx/feature/auth
+9c3d8e4 feat: updated salt and added HS256 algorithm
+1713c8a docs: documented GqlGuard and CurrentUser decorator
+992a86a feat: added guard to get user from access token, decorator to get user from request and added logout endpoint
+48b54b4 feat: refactor authentication flow and enhance token management
+cdac604 feat: added hashed refresh token to user entity en register function
+327c0dc feat: added onboarding inputs to user
+c76012b fix: fix type in CreateUserDto
+2d80464 feat: changes PR review
+03e313a docs: documented functions
+298e921 feat: fixed lint issues
+78ba337 feat: update project to graphql and fix issues
+856120b feat: refactor current auth code to use graphql instead of rest
+4f57ffc feat: added auth with JWT tokens
+e96da31 gh-action: updated workflows
+d7db670 feat: updated gh-action: commit
+e294e1c feat: initial commit
