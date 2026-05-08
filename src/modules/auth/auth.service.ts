@@ -28,6 +28,7 @@ export class AuthService {
 
     constructor(
         @InjectRepository(User) private authRepository: Repository<User>,
+        @InjectRepository(UserProfile) private userProfileRepository: Repository<UserProfile>,
         private configService: ConfigService,
         private tokenService: TokenService,
         private resendService: ResendService,
@@ -219,6 +220,21 @@ export class AuthService {
     public async findOneByUuid(uuid: string): Promise<User | null | undefined> {
         try {
             return await this.authRepository.findOne({ where: { uuid: uuid } });
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException(
+                'Invalid or expired refresh token',
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+
+    public async findUserProfile(uuid: string): Promise<UserProfile | null | undefined> {
+        try {
+            return await this.userProfileRepository.findOne({ where: { user: { uuid } } });
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {

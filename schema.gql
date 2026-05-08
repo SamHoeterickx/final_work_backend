@@ -11,6 +11,15 @@ type Chapter {
   uuid: ID!
 }
 
+type ChapterUser {
+  chapter: Chapter!
+  created_at: DateTime!
+  order: Float!
+  status: String!
+  user: User!
+  uuid: ID!
+}
+
 input CreateUserDto {
   email: String!
   name: String!
@@ -45,6 +54,7 @@ input LoginUserDto {
 
 type Mutation {
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
+  generateRoadMap: Boolean!
   logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
@@ -66,6 +76,7 @@ input OnboardingInput {
 
 type Query {
   getHello: String!
+  getMyChapters: [ChapterUser!]!
   healthCheck: String!
 }
 
@@ -84,6 +95,15 @@ input ResetPasswordWithCodeDto {
   newPassword: String!
   repeatNewPassword: String!
   resetCode: String!
+}
+
+type User {
+  created_at: DateTime!
+  currentHashedRefreshToken: String
+  email: String!
+  name: String!
+  role: String!
+  uuid: ID!
 }
 
 type UserTokens {

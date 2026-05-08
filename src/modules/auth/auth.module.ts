@@ -16,5 +16,6 @@ import { ResendService } from '../resend/resend.service';
         SharedModule,
     ],
     providers: [AuthService, AuthResolver, TokenService, ResendService],
+    exports: [AuthService],
 })
 export class AuthModule {}

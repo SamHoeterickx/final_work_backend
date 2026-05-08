@@ -1,10 +1,28 @@
-import { Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ChaptersService } from './chapters.service';
-import { Query } from '@nestjs/common';
+import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
+import { User } from '../auth/entity/user.entity';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
+import { ChapterUser } from './entity/chapter_user.entity';
 
 @Resolver()
+@UseGuards(GqlAuthGuard)
 export class ChaptersResolver {
     constructor(private chaptersService: ChaptersService){}
 
-    // @Query(() => [])
+    @Query(() => [ChapterUser])
+    public async getMyChapters(
+        @CurrentUser() user: User
+    ) {
+        return await this.chaptersService.getMyChapters(user.uuid);
+    }
+
+    @Mutation(() => Boolean)
+    public async generateRoadMap(
+        @CurrentUser() user: User,
+    ): Promise<boolean> {
+        await this.chaptersService.createChapterEntries(user.uuid);
+        return true;
+    }
 }
