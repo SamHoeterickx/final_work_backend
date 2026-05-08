@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Chapter } from './entity/chapter.entity';
 import { Repository } from 'typeorm';
 import { ChapterUser } from './entity/chapter_user.entity';
-import { AuthService } from '../auth/auth.service';
 import { EProgressStatus } from '../../shared/types/types';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable()
 export class ChaptersService {
@@ -42,6 +42,31 @@ export class ChaptersService {
             throw new InternalServerErrorException(`
                 Failed to get chapters for user: ${error instanceof Error ? error.message : String(error)}    
             `);
+        }
+    }
+
+    /**
+     * Generate custom roadmap for user based on the user profile
+     * 
+     * @param uuid - user uuid
+     * @returns a Promise containing a boolean
+     */
+    public async generateCustomRoadmap(uuid: string): Promise<boolean> {
+        try{
+            const userProfile = await this.authService.findUserProfile(uuid);
+            
+            //GENERATE THE ORDER FOR THE CUSTOM ROADMAP
+
+            await this.createChapterEntries(uuid);
+            return true;
+        }catch(error: unknown){
+            console.error(error);
+            if(error instanceof HttpException){
+                throw error;
+            };
+            throw new InternalServerErrorException(
+                `Failed to generate custom roadmap: ${error instanceof Error ? error.message : String(error)}`
+            );
         }
     }
 

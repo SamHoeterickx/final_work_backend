@@ -19,10 +19,9 @@ export class ChaptersResolver {
     }
 
     @Mutation(() => Boolean)
-    public async generateRoadMap(
+    public async generateCustomRoadmap(
         @CurrentUser() user: User,
     ): Promise<boolean> {
-        await this.chaptersService.createChapterEntries(user.uuid);
-        return true;
+        return await this.chaptersService.generateCustomRoadmap(user.uuid);
     }
 }

@@ -2,7 +2,7 @@ import {
     HttpException,
     HttpStatus,
     Injectable,
-    InternalServerErrorException,
+    InternalServerErrorException
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,8 +30,8 @@ export class AuthService {
         @InjectRepository(User) private authRepository: Repository<User>,
         @InjectRepository(UserProfile) private userProfileRepository: Repository<UserProfile>,
         private configService: ConfigService,
-        private tokenService: TokenService,
         private resendService: ResendService,
+        private tokenService: TokenService,
     ) {
         const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)

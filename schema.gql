@@ -54,7 +54,7 @@ input LoginUserDto {
 
 type Mutation {
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
-  generateRoadMap: Boolean!
+  generateCustomRoadmap: Boolean!
   logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
