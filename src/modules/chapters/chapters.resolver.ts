@@ -1,4 +1,4 @@
-import { Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ChaptersService } from './chapters.service';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
 import { User } from '../auth/entity/user.entity';

@@ -7,6 +7,7 @@ type Chapter {
   description: String!
   lessons: [Lesson!]
   name: String!
+  slug: String!
   tags: [String!]!
   uuid: ID!
 }

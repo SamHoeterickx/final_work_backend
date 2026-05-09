@@ -20,20 +20,19 @@ export class ChaptersService {
      * @returns a Promise containing an array of ChapterUser entity
      */
     public async getMyChapters(uuid: string): Promise<ChapterUser[]>{
-        try{
+        try {
             const uProgress = await this.chapterProgressRepository.find({
-                where: {
-                    user: { uuid }
-                },
-                relations: ['chapter']
+                where: { user: { uuid } },
+                relations: ['chapter'],
+                order: { order: 'ASC' } // Belangrijk: haal ze op in de juiste custom volgorde!
             });
 
-            if(!uProgress || uProgress.length === 0){
+            if (!uProgress || uProgress.length === 0) {
                 throw new HttpException('No chapters found for user', HttpStatus.NOT_FOUND);
             }
 
-            return uProgress
-        }catch(error: unknown){
+            return uProgress;
+        } catch(error: unknown) {
             console.error(error);
             if(error instanceof HttpException){
                 throw error;
@@ -47,19 +46,36 @@ export class ChaptersService {
 
     /**
      * Generate custom roadmap for user based on the user profile
-     * 
-     * @param uuid - user uuid
+     * * @param uuid - user uuid
      * @returns a Promise containing a boolean
      */
     public async generateCustomRoadmap(uuid: string): Promise<boolean> {
-        try{
+        try {
             const userProfile = await this.authService.findUserProfile(uuid);
             
-            //GENERATE THE ORDER FOR THE CUSTOM ROADMAP
+            const allChapters = await this.chapterRepository.find({
+                order: { created_at: 'ASC' } 
+            });
 
-            await this.createChapterEntries(uuid);
+            if (!allChapters || allChapters.length === 0) {
+                throw new HttpException('No chapters found in database', HttpStatus.NOT_FOUND);
+            }
+
+            const customRoadmap = this.determineRoadmapOrder(allChapters, userProfile);
+
+            const chapterProgresses = customRoadmap.map((chapter, index) => 
+                this.chapterProgressRepository.create({
+                    chapter: { uuid: chapter.uuid },
+                    user: { uuid },
+                    status: index === 0 ? EProgressStatus.UNLOCKED : EProgressStatus.LOCKED,
+                    order: index + 1, // Order is nu dynamisch!
+                })
+            );
+
+            await this.chapterProgressRepository.save(chapterProgresses);
             return true;
-        }catch(error: unknown){
+
+        } catch(error: unknown) {
             console.error(error);
             if(error instanceof HttpException){
                 throw error;
@@ -71,39 +87,83 @@ export class ChaptersService {
     }
 
     /**
-     * Create new chapter progress entries.
-     * 
-     * @param uuid - user uuid
-     * @returns a Promise containing a boolean
+     * Bepaalt de volgorde en filtert hoofdstukken op basis van het profiel
      */
-    public async createChapterEntries(uuid: string): Promise<boolean> {
-        try{
-            const chapters = await this.chapterRepository.find();
+    private determineRoadmapOrder(chapters: Chapter[], userProfile: any): Chapter[] {
+        let availableChapters = [...chapters];
 
-            if (!chapters || chapters.length === 0) {
-                throw new HttpException('Failed to find chapters', HttpStatus.NOT_FOUND);
-            }
-            
-            const chapterProgresses = chapters.map((chapter, index) => 
-                this.chapterProgressRepository.create({
-                    chapter: { uuid: chapter.uuid },
-                    user: { uuid },
-                    status: index + 1 === 1 ? EProgressStatus.UNLOCKED : EProgressStatus.LOCKED,
-                    order: index + 1,
-                })
-            );
-
-            await this.chapterProgressRepository.save(chapterProgresses);
-            return true;
-
-        }catch(error: unknown) {
-            console.error(error);
-            if(error instanceof HttpException) {
-                throw error
-            };
-            throw new InternalServerErrorException(
-                `Failed to create chapter entries for user: ${error instanceof Error ? error.message : String(error)}`
+        // ---------------------------------------------------------
+        // REGEL 1: FILTER OP ERVARING (experienceLevel)
+        // ---------------------------------------------------------
+        const exp = userProfile.experienceLevel?.toLowerCase();
+        
+        if (exp === 'taste_enjoyer' || exp === 'curious') {
+            availableChapters = availableChapters.filter(chapter => 
+                !chapter.tags.includes('ADVANCED')
             );
         }
+
+        // ---------------------------------------------------------
+        // REGEL 2: PRIORITEIT OP BASIS VAN DOEL (goal)
+        // ---------------------------------------------------------
+        let preferredTagOrder: string[] = ['BASICS']; 
+        const goal = userProfile.goal?.toLowerCase();
+        
+        switch (goal) {
+            case 'bean_to_cup':
+                // Wil alles weten over de hele keten
+                preferredTagOrder.push('BIOLOGY', 'ORIGINS', 'ROASTING', 'BREWING', 'CHEMISTRY', 'HISTORY', 'ETHICS');
+                break;
+            case 'perfect_espresso':
+                // Focus op hardware en de wetenschap van extractie
+                preferredTagOrder.push('EQUIPMENT', 'BREWING', 'CHEMISTRY', 'ROASTING');
+                break;
+            case 'tasting_skills':
+                // Focus op smaken, herkomst en het brandproces
+                preferredTagOrder.push('ORIGINS', 'ROASTING', 'BIOLOGY', 'BREWING');
+                break;
+            case 'latte_art':
+                // Vooral praktisch: melk opschuimen, schenken en apparatuur
+                preferredTagOrder.push('EQUIPMENT', 'BREWING');
+                break;
+            default:
+                preferredTagOrder.push('BIOLOGY', 'BREWING', 'ORIGINS', 'HISTORY');
+        }
+
+        // ---------------------------------------------------------
+        // REGEL 3: TWEAKEN OP BASIS VAN SMAAK (currentPreferences)
+        // ---------------------------------------------------------
+        const pref = userProfile.currentPreferences?.toLowerCase();
+        
+        if (pref === 'fruity_acidic') {
+            preferredTagOrder.unshift('ORIGINS'); 
+        } 
+        else if (pref === 'bold_classic') {
+            preferredTagOrder.unshift('ROASTING');
+        }
+
+        // ---------------------------------------------------------
+        // SORTEREN VAN DE LIJST
+        // ---------------------------------------------------------
+        availableChapters.sort((a, b) => {
+            const indexA = this.getHighestPriorityIndex(a.tags, preferredTagOrder);
+            const indexB = this.getHighestPriorityIndex(b.tags, preferredTagOrder);
+            
+            if (indexA === indexB) {
+                return a.created_at.getTime() - b.created_at.getTime();
+            }
+            return indexA - indexB;
+        });
+
+        return availableChapters;
+    }
+
+    private getHighestPriorityIndex(chapterTags: string[], preferredOrder: string[]): number {
+        for (let i = 0; i < preferredOrder.length; i++) {
+            if (chapterTags.includes(preferredOrder[i])) {
+                return i;
+            }
+        }
+        return 999;
     }
 }
