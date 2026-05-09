@@ -16,7 +16,7 @@ type ChapterUser {
   chapter: Chapter!
   created_at: DateTime!
   order: Float!
-  status: String!
+  status: EProgressStatus!
   user: User!
   uuid: ID!
 }
@@ -34,6 +34,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+"""De status van een les of hoofdstuk voor de gebruiker"""
+enum EProgressStatus {
+  COMPLETED
+  INPROGRESS
+  LOCKED
+  UNLOCKED
+}
+
 input ForgotPasswordRequestDto {
   email: String!
 }
@@ -45,6 +53,7 @@ type Lesson {
   description: String!
   estimatedDuration: Float!
   name: String!
+  status: EProgressStatus!
   uuid: ID!
 }
 

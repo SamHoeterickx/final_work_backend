@@ -15,6 +15,7 @@ export class ChaptersResolver {
     public async getMyChapters(
         @CurrentUser() user: User
     ) {
+        console.log('---User', user);
         return await this.chaptersService.getMyChapters(user.uuid);
     }
 

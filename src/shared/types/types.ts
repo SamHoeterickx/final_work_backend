@@ -1,3 +1,5 @@
+import { registerEnumType } from "@nestjs/graphql";
+
 export enum UserRoleType {
     ADMIN = 'ADMIN',
     USER = 'USER',
@@ -24,11 +26,15 @@ export interface IEmailOptions {
 }
 
 export enum EProgressStatus {
-    LOCKED = 'locked',
-    UNLOCKED = 'unlocked',
-    INPROGRESS = 'in_progress',
-    COMPLETED = 'completed'
+    LOCKED = 'LOCKED',
+    UNLOCKED = 'UNLOCKED',
+    INPROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED'
 }
+registerEnumType(EProgressStatus, {
+    name: 'EProgressStatus',
+    description: 'De status van een les of hoofdstuk voor de gebruiker',
+});
 
 export enum ETagOptions {
     TEST = 'TEST_1',

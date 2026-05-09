@@ -19,7 +19,7 @@ export class ChapterUser {
     @ManyToOne(() => Chapter, { onDelete: 'CASCADE' })
     chapter: Chapter;
 
-    @Field(() => String)
+    @Field(() => EProgressStatus)
     @Column({
         type: 'enum',
         enum: EProgressStatus,

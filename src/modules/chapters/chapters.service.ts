@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ChapterUser } from './entity/chapter_user.entity';
 import { EProgressStatus } from '../../shared/types/types';
 import { AuthService } from '../auth/auth.service';
+import { LessonsService } from '../lessons/lessons.service';
 
 @Injectable()
 export class ChaptersService {
@@ -12,6 +13,7 @@ export class ChaptersService {
         @InjectRepository(Chapter) private chapterRepository: Repository<Chapter>,
         @InjectRepository(ChapterUser) private chapterProgressRepository: Repository<ChapterUser>,
         private authService: AuthService,
+        private lessonsService: LessonsService
     ){}
 
     /**
@@ -21,17 +23,19 @@ export class ChaptersService {
      */
     public async getMyChapters(uuid: string): Promise<ChapterUser[]>{
         try {
-            const uProgress = await this.chapterProgressRepository.find({
+            const uChapterProgress = await this.chapterProgressRepository.find({
                 where: { user: { uuid } },
-                relations: ['chapter'],
-                order: { order: 'ASC' } // Belangrijk: haal ze op in de juiste custom volgorde!
+                relations: ['chapter', 'chapter.lessons'],
+                order: { order: 'ASC' }
             });
 
-            if (!uProgress || uProgress.length === 0) {
+            if (!uChapterProgress || uChapterProgress.length === 0) {
                 throw new HttpException('No chapters found for user', HttpStatus.NOT_FOUND);
             }
 
-            return uProgress;
+            console.log(uChapterProgress);
+
+            return uChapterProgress;
         } catch(error: unknown) {
             console.error(error);
             if(error instanceof HttpException){

@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { Chapter } from "../../chapters/entity/chapter.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { EProgressStatus } from "../../../shared/types/types";
 
 @ObjectType()
 @Entity('lessons')
@@ -31,6 +32,9 @@ export class Lesson {
         (chapter) => chapter.lessons
     )
     chapter: Chapter;
+
+    @Field(() => EProgressStatus)
+    status: EProgressStatus;
 
     @Field()
     @CreateDateColumn()
