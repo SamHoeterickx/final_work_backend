@@ -15,8 +15,15 @@ export class ChaptersResolver {
     public async getMyChapters(
         @CurrentUser() user: User
     ) {
-        console.log('---User', user);
         return await this.chaptersService.getMyChapters(user.uuid);
+    }
+
+    @Mutation(() => Boolean)
+    public async unlockNewChapter(
+        @CurrentUser() user: User
+    ) {
+        console.log(user)
+        return await this.chaptersService.unlockNewChapter(user.uuid)
     }
 
     @Mutation(() => Boolean)

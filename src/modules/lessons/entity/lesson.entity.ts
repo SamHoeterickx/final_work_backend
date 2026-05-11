@@ -37,6 +37,10 @@ export class Lesson {
     status: EProgressStatus;
 
     @Field()
+    @Column()
+    order: number;
+
+    @Field()
     @CreateDateColumn()
     created_at: Date;
 }

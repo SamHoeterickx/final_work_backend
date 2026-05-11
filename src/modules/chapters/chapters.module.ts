@@ -7,6 +7,7 @@ import { ChapterUser } from './entity/chapter_user.entity';
 import { TokenService } from '../../shared/token/token.service';
 import { AuthModule } from '../auth/auth.module';
 import { LessonsModule } from '../lessons/lessons.module';
+import { ChapterUserSubscriber } from '../../shared/subscribers/chapter_user.subscriber';
 
 @Module({
     imports: [
@@ -14,7 +15,7 @@ import { LessonsModule } from '../lessons/lessons.module';
         AuthModule,
         LessonsModule,
     ],
-    providers: [ChaptersResolver, ChaptersService, TokenService],
+    providers: [ChapterUserSubscriber, ChaptersResolver, ChaptersService, TokenService],
     exports: [ChaptersService]
 })
 export class ChaptersModule {}

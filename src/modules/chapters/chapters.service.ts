@@ -4,6 +4,7 @@ import { Chapter } from './entity/chapter.entity';
 import { Repository } from 'typeorm';
 import { ChapterUser } from './entity/chapter_user.entity';
 import { EProgressStatus } from '../../shared/types/types';
+import { LessonUser } from '../lessons/entity/lesson_user.entity';
 import { AuthService } from '../auth/auth.service';
 import { LessonsService } from '../lessons/lessons.service';
 
@@ -35,6 +36,8 @@ export class ChaptersService {
 
             console.log(uChapterProgress);
 
+            uChapterProgress.forEach(chapter => console.log(chapter.chapter.lessons))
+
             return uChapterProgress;
         } catch(error: unknown) {
             console.error(error);
@@ -58,7 +61,8 @@ export class ChaptersService {
             const userProfile = await this.authService.findUserProfile(uuid);
             
             const allChapters = await this.chapterRepository.find({
-                order: { created_at: 'ASC' } 
+                order: { created_at: 'ASC' },
+                relations: ['lessons'],
             });
 
             if (!allChapters || allChapters.length === 0) {
@@ -72,11 +76,28 @@ export class ChaptersService {
                     chapter: { uuid: chapter.uuid },
                     user: { uuid },
                     status: index === 0 ? EProgressStatus.UNLOCKED : EProgressStatus.LOCKED,
-                    order: index + 1, // Order is nu dynamisch!
+                    order: index + 1,
                 })
             );
 
             await this.chapterProgressRepository.save(chapterProgresses);
+
+            // Add entries for lesson_user for the chapter with order 1
+            const firstChapter = customRoadmap[0];
+            if (firstChapter && firstChapter.lessons && firstChapter.lessons.length > 0) {
+                const lessonUserRepo = this.chapterProgressRepository.manager.getRepository(LessonUser);
+                
+                const lessonUserEntries = firstChapter.lessons.map(lesson => {
+                    return lessonUserRepo.create({
+                        user: { uuid },
+                        lesson: { uuid: lesson.uuid },
+                        status: lesson.order === 1 ? EProgressStatus.UNLOCKED : EProgressStatus.LOCKED
+                    });
+                });
+
+                await lessonUserRepo.save(lessonUserEntries);
+            }
+
             return true;
 
         } catch(error: unknown) {
@@ -86,6 +107,47 @@ export class ChaptersService {
             };
             throw new InternalServerErrorException(
                 `Failed to generate custom roadmap: ${error instanceof Error ? error.message : String(error)}`
+            );
+        }
+    }
+
+    public async unlockNewChapter(uuid: string): Promise<boolean> {
+        try{
+            const currentChapter = await this.chapterProgressRepository.findOne({
+                where: { 
+                    user: { uuid }, 
+                    status: EProgressStatus.INPROGRESS 
+                },
+            });
+
+            if (!currentChapter) {
+                throw new HttpException('No chapter currently in progress', HttpStatus.NOT_FOUND);
+            }
+
+            currentChapter.status = EProgressStatus.COMPLETED;
+            await this.chapterProgressRepository.save(currentChapter);
+
+            const nextChapter = await this.chapterProgressRepository.findOne({
+                where: { 
+                    user: { uuid }, 
+                    order: currentChapter.order + 1 
+                },
+                relations: ['chapter', 'user']
+            });
+
+            if (nextChapter && nextChapter.status === EProgressStatus.LOCKED) {
+                nextChapter.status = EProgressStatus.UNLOCKED;
+                await this.chapterProgressRepository.save(nextChapter);
+            }
+
+            return true;
+        } catch(error: unknown) {
+            console.error(error);
+            if(error instanceof HttpException){
+                throw error;
+            };
+            throw new InternalServerErrorException(
+                `Failed to unlock next chapter: ${error instanceof Error ? error.message : String(error)}`
             );
         }
     }
