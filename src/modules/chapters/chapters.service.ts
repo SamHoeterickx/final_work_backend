@@ -27,16 +27,19 @@ export class ChaptersService {
             const uChapterProgress = await this.chapterProgressRepository.find({
                 where: { user: { uuid } },
                 relations: ['chapter', 'chapter.lessons'],
-                order: { order: 'ASC' }
+                order: { 
+                    order: 'ASC',
+                    chapter: {
+                        lessons: {
+                            order: 'ASC'
+                        }
+                    }
+                }
             });
 
             if (!uChapterProgress || uChapterProgress.length === 0) {
                 throw new HttpException('No chapters found for user', HttpStatus.NOT_FOUND);
             }
-
-            console.log(uChapterProgress);
-
-            uChapterProgress.forEach(chapter => console.log(chapter.chapter.lessons))
 
             return uChapterProgress;
         } catch(error: unknown) {
