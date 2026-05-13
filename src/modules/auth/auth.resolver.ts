@@ -15,6 +15,7 @@ import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
 import { UserData } from './models/user-data.model';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
+import { DeleteUserDto } from './dto/deleteUser.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -106,5 +107,14 @@ export class AuthResolver {
         @Args('input') input: ResetPasswordWithCodeDto,
     ): Promise<UserTokens> {
         return await this.authService.resetPasswordWithCode(input);
+    }
+    
+    @Mutation(() => Boolean)
+    @UseGuards(GqlAuthGuard)
+    public async deleteUser(
+        @CurrentUser() user: User,
+        @Args('input') input: DeleteUserDto
+    ): Promise<boolean>{
+        return await this.authService.deleteUser(user.uuid, input)
     }
 }

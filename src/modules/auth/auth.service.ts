@@ -24,6 +24,7 @@ import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
 import { UserData } from './models/user-data.model';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
+import { DeleteUserDto } from './dto/deleteUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -529,6 +530,33 @@ export class AuthService {
             }
             throw new InternalServerErrorException(
                 `Failed to update username: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async deleteUser(uuid: string, input: DeleteUserDto): Promise<boolean> {
+        try{
+            const { password } = input;
+
+            const dbUser = await this.authRepository.findOne({
+                where: { uuid }
+            });
+            if (!dbUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+            const isMatch = await this.comparePasswords(password, dbUser.password);
+            if(isMatch) {
+                await this.authRepository.delete(uuid);
+                return true
+            }
+
+            throw new HttpException('Invalid credentials', 409);
+        }catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to delete user: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }

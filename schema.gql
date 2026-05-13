@@ -34,6 +34,10 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input DeleteUserDto {
+  password: String!
+}
+
 enum EProgressStatus {
   COMPLETED
   INPROGRESS
@@ -63,6 +67,7 @@ input LoginUserDto {
 }
 
 type Mutation {
+  deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
   generateCustomRoadmap: Boolean!
   logOut: Boolean!
