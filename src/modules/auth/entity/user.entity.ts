@@ -41,6 +41,14 @@ export class User {
     })
     level: EUserLevels;
 
+    @Field()
+    @Column({ default: 0 })
+    xp: number;
+
+    @Field()
+    @Column({ default: 0 })
+    streaks: number;
+
     @Column({ type: 'varchar', nullable: true })
     passwordResetCode: string | null;
 

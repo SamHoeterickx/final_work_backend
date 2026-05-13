@@ -13,6 +13,7 @@ import { type Request } from 'express';
 import { ResendService } from './modules/resend/resend.service';
 import { ChaptersModule } from './modules/chapters/chapters.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
+import { XpModule } from './modules/xp/xp.module';
 
 @Module({
     imports: [
@@ -48,6 +49,7 @@ import { LessonsModule } from './modules/lessons/lessons.module';
         SharedModule,
         ChaptersModule,
         LessonsModule,
+        XpModule,
     ],
     providers: [
         AppService,

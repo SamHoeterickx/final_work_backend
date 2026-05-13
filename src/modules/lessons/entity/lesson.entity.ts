@@ -20,7 +20,7 @@ export class Lesson {
 
     @Field()
     @Column()
-    estimatedDuration: number;
+    estimatedDuration: number;  
 
     @Field()
     @Column({ type: "text" })
@@ -35,6 +35,10 @@ export class Lesson {
 
     @Field(() => EProgressStatus)
     status: EProgressStatus;
+
+    @Field({ defaultValue: 10 })
+    @Column({ default: 0 })
+    xp: number;
 
     @Field()
     @Column()

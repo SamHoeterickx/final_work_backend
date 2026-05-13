@@ -21,6 +21,10 @@ type ChapterUser {
   uuid: ID!
 }
 
+input CompleteLessonDto {
+  lessonUuid: String!
+}
+
 input CreateUserDto {
   email: String!
   name: String!
@@ -59,6 +63,7 @@ type Lesson {
   order: Float!
   status: EProgressStatus!
   uuid: ID!
+  xp: Float!
 }
 
 input LoginUserDto {
@@ -67,6 +72,7 @@ input LoginUserDto {
 }
 
 type Mutation {
+  completeLesson(input: CompleteLessonDto!): Boolean!
   deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
   generateCustomRoadmap: Boolean!
@@ -131,7 +137,9 @@ type User {
   level: String!
   name: String!
   role: String!
+  streaks: Float!
   uuid: ID!
+  xp: Float!
 }
 
 type UserData {
