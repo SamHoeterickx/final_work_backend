@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, InternalServerErrorException } f
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entity/user.entity';
 import { Repository } from 'typeorm';
+import { UserStreaks } from '../auth/entity/user_streak.entity';
 
 @Injectable()
 export class XpService {
@@ -14,7 +15,8 @@ export class XpService {
     private readonly CHAPTER_MULTIPLIER = 50;
 
     constructor(
-        @InjectRepository(User) private userRepository: Repository<User>
+        @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(UserStreaks) private streakRepository: Repository<UserStreaks>,
     ){}
 
     private calculateByStreaksXP(streaks: number, earnedXp: number): number {
@@ -35,12 +37,17 @@ export class XpService {
 
     public async updateUserXP(uuid: string, earnedXP: number, isLastLesson: boolean, amountOfLessonsInChapter: number){
         try{
-            const user = await this.userRepository.findOne({ where: { uuid } });
+            const user = await this.userRepository.findOne({ 
+                where: { uuid },
+                relations: ['streak']
+            });
             if (!user) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
             }
 
-            let multipliedXP = this.calculateByStreaksXP(user.streaks, earnedXP);
+            const updatedStreak = await this.handleStreakUpdate(user);
+
+            let multipliedXP = this.calculateByStreaksXP(updatedStreak.currentStreak, earnedXP);
 
             if(isLastLesson){
                 const chapterMultipliedXP = this.calculateByChapterXP(amountOfLessonsInChapter);
@@ -62,6 +69,47 @@ export class XpService {
                 `Failed update xp: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
+    }
+
+    private async handleStreakUpdate(user: User): Promise<UserStreaks> {
+        let streak = user.streak;
+
+        if (!streak) {
+            streak = this.streakRepository.create({
+                user: user,
+                currentStreak: 0,
+                longestStreak: 0,
+                lastCompletedDate: null
+            });
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (!streak.lastCompletedDate) {
+            streak.currentStreak = 1;
+            streak.lastCompletedDate = today;
+        } else {
+            const lastDate = new Date(streak.lastCompletedDate);
+            lastDate.setHours(0, 0, 0, 0);
+
+            const diffTime = today.getTime() - lastDate.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+            if (diffDays === 1) {
+                streak.currentStreak += 1;
+                streak.lastCompletedDate = today;
+            } else if (diffDays > 1) {
+                streak.currentStreak = 1;
+                streak.lastCompletedDate = today;
+            }
+        }
+
+        if (streak.currentStreak > streak.longestStreak) {
+            streak.longestStreak = streak.currentStreak;
+        }
+
+        return await this.streakRepository.save(streak);
     }
 
 }

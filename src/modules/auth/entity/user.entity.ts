@@ -4,8 +4,10 @@ import {
     Column,
     CreateDateColumn,
     Entity,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserStreaks } from './user_streak.entity';
 
 @ObjectType()
 @Entity('users')
@@ -45,9 +47,12 @@ export class User {
     @Column({ default: 0 })
     xp: number;
 
-    @Field()
-    @Column({ default: 0 })
-    streaks: number;
+    @Field(() => UserStreaks, { nullable: true })
+    @OneToOne(
+        () => UserStreaks,
+        (streak) => streak.user
+    )
+    streak: UserStreaks;
 
     @Column({ type: 'varchar', nullable: true })
     passwordResetCode: string | null;

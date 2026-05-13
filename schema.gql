@@ -137,7 +137,7 @@ type User {
   level: String!
   name: String!
   role: String!
-  streaks: Float!
+  streak: UserStreaks
   uuid: ID!
   xp: Float!
 }
@@ -147,6 +147,13 @@ type UserData {
   level: String!
   name: String!
   role: String!
+}
+
+type UserStreaks {
+  currentStreak: Float!
+  lastCompletedDate: DateTime
+  longestStreak: Float!
+  uuid: ID!
 }
 
 type UserTokens {
