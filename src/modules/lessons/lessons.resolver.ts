@@ -7,6 +7,7 @@ import { Lesson } from './entity/lesson.entity';
 import { User } from '../auth/entity/user.entity';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
 import { CompleteLessonDto } from './dto/completeLesson.dto';
+import { CompleteLessonResponse } from './complete-lesson-response.model';
 
 @Resolver(() => Lesson)
 @UseGuards(GqlAuthGuard)
@@ -21,11 +22,11 @@ export class LessonsResolver {
         return await this.lessonsService.getLessonStatusForUser(lesson.uuid, user.uuid);
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => CompleteLessonResponse)
     async completeLesson(
         @CurrentUser() user: User,
         @Args('input') input: CompleteLessonDto
-    ){
-        return this.lessonsService.completeLesson(input.lessonUuid, user.uuid)
+    ): Promise<CompleteLessonResponse> {
+        return this.lessonsService.completeLesson(input.lessonUuid, user.uuid);
     }
 }

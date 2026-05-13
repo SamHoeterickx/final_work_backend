@@ -25,6 +25,17 @@ input CompleteLessonDto {
   lessonUuid: String!
 }
 
+type CompleteLessonResponse {
+  isLastLesson: Boolean!
+  newStreak: Int!
+  newUnlockedChapter: Chapter
+  newUnlockedLesson: Lesson
+  newUserXP: Int!
+  prevStreak: Int!
+  prevUserXP: Int!
+  streak: UserStreaks!
+}
+
 input CreateUserDto {
   email: String!
   name: String!
@@ -72,7 +83,7 @@ input LoginUserDto {
 }
 
 type Mutation {
-  completeLesson(input: CompleteLessonDto!): Boolean!
+  completeLesson(input: CompleteLessonDto!): CompleteLessonResponse!
   deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
   generateCustomRoadmap: Boolean!

@@ -6,6 +6,8 @@ import { LessonUser } from './entity/lesson_user.entity';
 import { EProgressStatus } from '../../shared/types/types';
 import { XpService } from '../xp/xp.service';
 import { ChapterUser } from '../chapters/entity/chapter_user.entity';
+import { Chapter } from '../chapters/entity/chapter.entity';
+import { CompleteLessonResponse } from './complete-lesson-response.model';
 
 @Injectable()
 export class LessonsService {
@@ -32,22 +34,10 @@ export class LessonsService {
         }
     }
 
-    public async completeLesson(lessonUuid: string, userUuid: string): Promise<boolean>{
+    public async completeLesson(lessonUuid: string, userUuid: string): Promise<CompleteLessonResponse> {
         try {
             const lesson = await this.lessonRepository.findOne({
                 where: { uuid: lessonUuid },
-                select: {
-                    uuid: true,
-                    order: true,
-                    xp: true,
-                    chapter: {
-                        uuid: true,
-                        lessons: {
-                            uuid: true,
-                            order: true
-                        }
-                    },
-                },
                 order: {
                     chapter: {
                         lessons: {
@@ -70,7 +60,7 @@ export class LessonsService {
             }
 
             if (lessonUser.status === EProgressStatus.COMPLETED) {
-                return true;
+                throw new HttpException('Lesson already completed', HttpStatus.BAD_REQUEST);
             }
 
             const amountOfLessonsInChapter = lesson.chapter?.lessons?.length || 0;
@@ -78,8 +68,11 @@ export class LessonsService {
             const isLastLesson = !nextLesson;
             const earnedXP = lesson.xp;
 
-            await this.xpService.updateUserXP(userUuid, earnedXP, isLastLesson, amountOfLessonsInChapter);
+            const updatedXP = await this.xpService.updateUserXP(userUuid, earnedXP, isLastLesson, amountOfLessonsInChapter);
             await this.lessonUserRepository.update(lessonUser.uuid, { status: EProgressStatus.COMPLETED });
+
+            let newUnlockedLesson: Lesson | null = null;
+            let newUnlockedChapter: Chapter | null = null;
 
             if(!isLastLesson && nextLesson){
 
@@ -88,14 +81,15 @@ export class LessonsService {
                         lesson: { uuid: nextLesson.uuid },
                         user: { uuid: userUuid }
                     },
-                    select: { uuid: true }
+                    relations: ['lesson']
                 });
-                
+
                 if(!nextLessonUser){
                     throw new HttpException('No lesson found', HttpStatus.NOT_FOUND);
                 }
 
                 await this.lessonUserRepository.update(nextLessonUser.uuid, { status: EProgressStatus.UNLOCKED })
+                newUnlockedLesson = nextLessonUser.lesson
             }
 
             if(isLastLesson){
@@ -121,10 +115,16 @@ export class LessonsService {
                 if (nextChapterUser && nextChapterUser.status === EProgressStatus.LOCKED) {
                     nextChapterUser.status = EProgressStatus.UNLOCKED;
                     await this.chapterUserRepository.save(nextChapterUser);
+                    newUnlockedChapter = nextChapterUser.chapter;
                 }
             }
 
-            return true
+            return {
+                ...updatedXP,
+                isLastLesson,
+                newUnlockedLesson,
+                newUnlockedChapter
+            }
             
         } catch (error) {
             if (error instanceof HttpException) {

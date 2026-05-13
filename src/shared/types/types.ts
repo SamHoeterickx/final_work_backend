@@ -1,4 +1,5 @@
 import { registerEnumType } from "@nestjs/graphql";
+import { UserStreaks } from "../../modules/auth/entity/user_streak.entity";
 
 export enum UserRoleType {
     ADMIN = 'ADMIN',
@@ -26,6 +27,17 @@ export interface IEmailOptions {
     reciever: string;
     message: string;
     subject: string;
+}
+
+export interface IHandleStreakUpdate {
+    prevStreak: number;
+    newStreak: number; 
+    streak: UserStreaks;
+}
+
+export interface IUpdateXP extends IHandleStreakUpdate{
+    prevUserXP: number;
+    newUserXP: number;
 }
 
 export enum EProgressStatus {
