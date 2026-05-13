@@ -12,6 +12,9 @@ import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { ForgotPasswordRequestDto } from './dto/forgotPasswordRequest';
 import { ResetPasswordWithCodeDto } from './dto/resetPasswordWithCode.dto';
 import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
+import { UserData } from './models/user-data.model';
+import { UpdateEmailDto } from './dto/updateEmail.dto';
+import { UpdateUsernameDto } from './dto/updateUsername.dto';
 
 @Resolver()
 export class AuthResolver {
@@ -20,6 +23,14 @@ export class AuthResolver {
     @Query(() => String)
     public healthCheck(): string {
         return 'OK';
+    }
+
+    @Query(() => UserData)
+    @UseGuards(GqlAuthGuard)
+    public async getUserData(
+        @CurrentUser() user: User
+    ):Promise<UserData>{
+        return await this.authService.getUserData(user.uuid)
     }
 
     @Mutation(() => UserTokens)
@@ -47,6 +58,24 @@ export class AuthResolver {
     @UseGuards(GqlAuthGuard)
     public async logOut(@CurrentUser() user: User): Promise<boolean> {
         return this.authService.logout(user.uuid);
+    }
+
+    @Mutation(() => Boolean)
+    @UseGuards(GqlAuthGuard)
+    public async updateEmail(
+        @CurrentUser() user: User,
+        @Args('input') input: UpdateEmailDto
+    ): Promise<boolean>{
+        return await this.authService.updateEmail(user, input);
+    }
+
+    @Mutation(() => Boolean)
+    @UseGuards(GqlAuthGuard)
+    public async updateUserName(
+        @CurrentUser() user: User,
+        @Args('input') input: UpdateUsernameDto
+    ): Promise<boolean>{
+        return await this.authService.updateUserName(user, input)
     }
 
     @Mutation(() => UserTokens)

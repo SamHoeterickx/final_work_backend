@@ -21,6 +21,9 @@ import { ResendService } from '../resend/resend.service';
 import { ResetPasswordWithCodeDto } from './dto/resetPasswordWithCode.dto';
 import { UserTokens } from './models/user-tokens.model';
 import { VerifyPasswordResetCodeDto } from './dto/verifyPasswordResetCode.dto';
+import { UserData } from './models/user-data.model';
+import { UpdateEmailDto } from './dto/updateEmail.dto';
+import { UpdateUsernameDto } from './dto/updateUsername.dto';
 
 @Injectable()
 export class AuthService {
@@ -40,6 +43,35 @@ export class AuthService {
             );
 
         this.PEPPER = SALT;
+    }
+
+    public async getUserData(uuid: string):Promise<UserData> {
+        try{
+            const eUser = await this.authRepository.findOne({ 
+                where: { uuid },
+                select: {
+                    name: true,
+                    email: true,
+                    role: true,
+                    level: true
+                }
+            });
+            
+            if(!eUser){
+                throw new HttpException('No user found', HttpStatus.NOT_FOUND)
+            }
+
+            return eUser
+
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to encrypt password: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
     }
 
     public async loginUser(body: LoginUserDto): Promise<IUserTokens> {
@@ -451,6 +483,52 @@ export class AuthService {
             }
             throw new InternalServerErrorException(
                 `Failed to request forgot password: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async updateEmail(user: User, input: UpdateEmailDto): Promise<boolean> {
+        try{
+            const { updatedEmailAdress } = input;
+            const uUser = await this.authRepository.update(user.uuid, {email: updatedEmailAdress})
+
+            if (uUser.affected === 0) {
+                throw new InternalServerErrorException(
+                    `Failed to update email`
+                )
+            }
+
+            return true
+        }catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to update email: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async updateUserName(user: User, input: UpdateUsernameDto): Promise<boolean> {
+        try{
+            const { updatedUsername } = input;
+            const uUser = await this.authRepository.update(user.uuid, {name: updatedUsername})
+
+            if (uUser.affected === 0) {
+                throw new InternalServerErrorException(
+                    `Failed to update username`
+                )
+            }
+
+            return true
+        }catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to update username: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }

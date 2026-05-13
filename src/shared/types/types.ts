@@ -4,6 +4,9 @@ export enum UserRoleType {
     ADMIN = 'ADMIN',
     USER = 'USER',
 }
+registerEnumType(UserRoleType, {
+    name: 'EUserRoleType',
+})
 
 export interface IUserTokens {
     accessToken: string;
@@ -33,7 +36,6 @@ export enum EProgressStatus {
 }
 registerEnumType(EProgressStatus, {
     name: 'EProgressStatus',
-    description: 'De status van een les of hoofdstuk voor de gebruiker',
 });
 
 export enum ETagOptions {
@@ -49,3 +51,10 @@ export enum ETagOptions {
     BIOLOGY = 'BIOLOGY',
     ADVANCED = 'ADVANCED'
 }
+
+export enum EUserLevels {
+    BEGINNER = 'BEGINNER'
+}
+registerEnumType(EUserLevels, {
+    name: 'EUserLevels',
+})

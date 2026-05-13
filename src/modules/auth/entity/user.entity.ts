@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserRoleType } from '../../../shared/types/types';
+import { EUserLevels, UserRoleType } from '../../../shared/types/types';
 import {
     Column,
     CreateDateColumn,
@@ -32,6 +32,14 @@ export class User {
         default: UserRoleType.USER,
     })
     role: UserRoleType;
+
+    @Field()
+    @Column({
+        type: 'enum',
+        enum: EUserLevels,
+        default: EUserLevels.BEGINNER
+    })
+    level: EUserLevels;
 
     @Column({ type: 'varchar', nullable: true })
     passwordResetCode: string | null;

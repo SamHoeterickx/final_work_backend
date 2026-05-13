@@ -34,7 +34,6 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""De status van een les of hoofdstuk voor de gebruiker"""
 enum EProgressStatus {
   COMPLETED
   INPROGRESS
@@ -73,6 +72,8 @@ type Mutation {
   resetPassword(input: ResetPasswordDto!): UserTokens!
   resetPasswordWithCode(input: ResetPasswordWithCodeDto!): UserTokens!
   unlockNewChapter: Boolean!
+  updateEmail(input: UpdateEmailDto!): Boolean!
+  updateUserName(input: UpdateUsernameDto!): Boolean!
   verifyPasswordResetCode(input: VerifyPasswordResetCodeDto!): Boolean!
 }
 
@@ -89,6 +90,7 @@ input OnboardingInput {
 type Query {
   getHello: String!
   getMyChapters: [ChapterUser!]!
+  getUserData: UserData!
   healthCheck: String!
 }
 
@@ -109,13 +111,29 @@ input ResetPasswordWithCodeDto {
   resetCode: String!
 }
 
+input UpdateEmailDto {
+  updatedEmailAdress: String!
+}
+
+input UpdateUsernameDto {
+  updatedUsername: String!
+}
+
 type User {
   created_at: DateTime!
   currentHashedRefreshToken: String
   email: String!
+  level: String!
   name: String!
   role: String!
   uuid: ID!
+}
+
+type UserData {
+  email: String!
+  level: String!
+  name: String!
+  role: String!
 }
 
 type UserTokens {
