@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IUserTokens } from '../../shared/types/types';
+import { IUserTokens, IOnboardingData } from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
@@ -104,7 +104,8 @@ export class AuthService {
     }
 
     public async createNewUser(body: CreateUserDto): Promise<IUserTokens> {
-        const { name, email, password, repeatPassword, onboarding } = body;
+        const { name, email, password, repeatPassword } = body;
+        const onboarding = body.onboarding as unknown as IOnboardingData;
 
         try {
             if (password !== repeatPassword) {
