@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entity/user.entity';
 import { Repository } from 'typeorm';
@@ -17,8 +22,9 @@ export class XpService {
 
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
-        @InjectRepository(UserStreaks) private streakRepository: Repository<UserStreaks>,
-    ){}
+        @InjectRepository(UserStreaks)
+        private streakRepository: Repository<UserStreaks>,
+    ) {}
 
     private calculateByStreaksXP(streaks: number, earnedXp: number): number {
         if (streaks >= this.SECOND_STREAK_AMOUNT) {
@@ -36,11 +42,16 @@ export class XpService {
         return amountOfLessonsInChapter * this.CHAPTER_MULTIPLIER;
     }
 
-    public async updateUserXP(uuid: string, earnedXP: number, isLastLesson: boolean, amountOfLessonsInChapter: number): Promise<IUpdateXP>{
-        try{
-            const user = await this.userRepository.findOne({ 
+    public async updateUserXP(
+        uuid: string,
+        earnedXP: number,
+        isLastLesson: boolean,
+        amountOfLessonsInChapter: number,
+    ): Promise<IUpdateXP> {
+        try {
+            const user = await this.userRepository.findOne({
                 where: { uuid },
-                relations: ['streak']
+                relations: ['streak'],
             });
             if (!user) {
                 throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -49,16 +60,23 @@ export class XpService {
             const prevUserXP = user.xp;
             const updatedStreak = await this.handleStreakUpdate(user);
 
-            let multipliedXP = this.calculateByStreaksXP(updatedStreak.streak.currentStreak, earnedXP);
+            let multipliedXP = this.calculateByStreaksXP(
+                updatedStreak.streak.currentStreak,
+                earnedXP,
+            );
 
-            if(isLastLesson){
-                const chapterMultipliedXP = this.calculateByChapterXP(amountOfLessonsInChapter);
+            if (isLastLesson) {
+                const chapterMultipliedXP = this.calculateByChapterXP(
+                    amountOfLessonsInChapter,
+                );
                 multipliedXP = multipliedXP + chapterMultipliedXP;
             }
-            
+
             const newUserXP = Math.round(user.xp + multipliedXP);
-            const eUser = await this.userRepository.update(uuid, { xp: newUserXP });
-            
+            const eUser = await this.userRepository.update(uuid, {
+                xp: newUserXP,
+            });
+
             if (eUser.affected === 0) {
                 throw new InternalServerErrorException('Failed to update xp');
             }
@@ -66,8 +84,8 @@ export class XpService {
             return {
                 prevUserXP,
                 newUserXP,
-                ...updatedStreak
-            }
+                ...updatedStreak,
+            };
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -79,19 +97,17 @@ export class XpService {
         }
     }
 
-    
     private async handleStreakUpdate(user: User): Promise<IHandleStreakUpdate> {
         let streak = user.streak;
 
         const prevStreak = streak.currentStreak;
-        let newStreak: number;
 
         if (!streak) {
             streak = this.streakRepository.create({
                 user: user,
                 currentStreak: 0,
                 longestStreak: 0,
-                lastCompletedDate: null
+                lastCompletedDate: null,
             });
         }
 
@@ -117,9 +133,9 @@ export class XpService {
             }
         }
 
-        newStreak = streak.currentStreak;
+        const newStreak = streak.currentStreak;
 
-        console.log(prevStreak, newStreak)
+        console.log(prevStreak, newStreak);
 
         if (streak.currentStreak > streak.longestStreak) {
             streak.longestStreak = streak.currentStreak;
@@ -128,10 +144,9 @@ export class XpService {
         const uStreak = await this.streakRepository.save(streak);
 
         return {
-            prevStreak, 
+            prevStreak,
             newStreak,
-            streak: uStreak
-        }
+            streak: uStreak,
+        };
     }
-
 }

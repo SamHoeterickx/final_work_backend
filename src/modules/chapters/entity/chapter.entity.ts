@@ -1,6 +1,12 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Lesson } from "../../lessons/entity/lesson.entity";
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Lesson } from '../../lessons/entity/lesson.entity';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity('chapters')
@@ -22,10 +28,7 @@ export class Chapter {
     description: string;
 
     @Field(() => [Lesson], { nullable: true })
-    @OneToMany(
-        () => Lesson,
-        (lesson) => lesson.chapter
-    )
+    @OneToMany(() => Lesson, (lesson) => lesson.chapter)
     lessons: Lesson[];
 
     @Field(() => [String])

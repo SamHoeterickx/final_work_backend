@@ -39,7 +39,7 @@ export class User {
     @Column({
         type: 'enum',
         enum: EUserLevels,
-        default: EUserLevels.BEGINNER
+        default: EUserLevels.BEGINNER,
     })
     level: EUserLevels;
 
@@ -48,10 +48,7 @@ export class User {
     xp: number;
 
     @Field(() => UserStreaks, { nullable: true })
-    @OneToOne(
-        () => UserStreaks,
-        (streak) => streak.user
-    )
+    @OneToOne(() => UserStreaks, (streak) => streak.user)
     streak: UserStreaks;
 
     @Column({ type: 'varchar', nullable: true })

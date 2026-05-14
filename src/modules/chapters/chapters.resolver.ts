@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ChaptersService } from './chapters.service';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
 import { User } from '../auth/entity/user.entity';
@@ -9,21 +9,17 @@ import { ChapterUser } from './entity/chapter_user.entity';
 @Resolver()
 @UseGuards(GqlAuthGuard)
 export class ChaptersResolver {
-    constructor(private chaptersService: ChaptersService){}
+    constructor(private chaptersService: ChaptersService) {}
 
     @Query(() => [ChapterUser])
-    public async getMyChapters(
-        @CurrentUser() user: User
-    ) {
+    public async getMyChapters(@CurrentUser() user: User) {
         return await this.chaptersService.getMyChapters(user.uuid);
     }
 
     @Mutation(() => Boolean)
-    public async unlockNewChapter(
-        @CurrentUser() user: User
-    ) {
-        console.log(user)
-        return await this.chaptersService.unlockNewChapter(user.uuid)
+    public async unlockNewChapter(@CurrentUser() user: User) {
+        console.log(user);
+        return await this.chaptersService.unlockNewChapter(user.uuid);
     }
 
     @Mutation(() => Boolean)

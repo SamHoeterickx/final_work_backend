@@ -2,7 +2,7 @@ import {
     HttpException,
     HttpStatus,
     Injectable,
-    InternalServerErrorException
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -32,7 +32,8 @@ export class AuthService {
 
     constructor(
         @InjectRepository(User) private authRepository: Repository<User>,
-        @InjectRepository(UserProfile) private userProfileRepository: Repository<UserProfile>,
+        @InjectRepository(UserProfile)
+        private userProfileRepository: Repository<UserProfile>,
         private configService: ConfigService,
         private resendService: ResendService,
         private tokenService: TokenService,
@@ -46,24 +47,23 @@ export class AuthService {
         this.PEPPER = SALT;
     }
 
-    public async getUserData(uuid: string):Promise<UserData> {
-        try{
-            const eUser = await this.authRepository.findOne({ 
+    public async getUserData(uuid: string): Promise<UserData> {
+        try {
+            const eUser = await this.authRepository.findOne({
                 where: { uuid },
                 select: {
                     name: true,
                     email: true,
                     role: true,
-                    level: true
-                }
+                    level: true,
+                },
             });
-            
-            if(!eUser){
-                throw new HttpException('No user found', HttpStatus.NOT_FOUND)
+
+            if (!eUser) {
+                throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 
-            return eUser
-
+            return eUser;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -265,9 +265,13 @@ export class AuthService {
         }
     }
 
-    public async findUserProfile(uuid: string): Promise<UserProfile | null | undefined> {
+    public async findUserProfile(
+        uuid: string,
+    ): Promise<UserProfile | null | undefined> {
         try {
-            return await this.userProfileRepository.findOne({ where: { user: { uuid } } });
+            return await this.userProfileRepository.findOne({
+                where: { user: { uuid } },
+            });
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -488,19 +492,24 @@ export class AuthService {
         }
     }
 
-    public async updateEmail(user: User, input: UpdateEmailDto): Promise<boolean> {
-        try{
+    public async updateEmail(
+        user: User,
+        input: UpdateEmailDto,
+    ): Promise<boolean> {
+        try {
             const { updatedEmailAdress } = input;
-            const uUser = await this.authRepository.update(user.uuid, {email: updatedEmailAdress})
+            const uUser = await this.authRepository.update(user.uuid, {
+                email: updatedEmailAdress,
+            });
 
             if (uUser.affected === 0) {
                 throw new InternalServerErrorException(
-                    `Failed to update email`
-                )
+                    `Failed to update email`,
+                );
             }
 
-            return true
-        }catch (error: unknown) {
+            return true;
+        } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
                 throw error;
@@ -511,19 +520,24 @@ export class AuthService {
         }
     }
 
-    public async updateUserName(user: User, input: UpdateUsernameDto): Promise<boolean> {
-        try{
+    public async updateUserName(
+        user: User,
+        input: UpdateUsernameDto,
+    ): Promise<boolean> {
+        try {
             const { updatedUsername } = input;
-            const uUser = await this.authRepository.update(user.uuid, {name: updatedUsername})
+            const uUser = await this.authRepository.update(user.uuid, {
+                name: updatedUsername,
+            });
 
             if (uUser.affected === 0) {
                 throw new InternalServerErrorException(
-                    `Failed to update username`
-                )
+                    `Failed to update username`,
+                );
             }
 
-            return true
-        }catch (error: unknown) {
+            return true;
+        } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
                 throw error;
@@ -534,23 +548,30 @@ export class AuthService {
         }
     }
 
-    public async deleteUser(uuid: string, input: DeleteUserDto): Promise<boolean> {
-        try{
+    public async deleteUser(
+        uuid: string,
+        input: DeleteUserDto,
+    ): Promise<boolean> {
+        try {
             const { password } = input;
 
             const dbUser = await this.authRepository.findOne({
-                where: { uuid }
+                where: { uuid },
             });
-            if (!dbUser) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+            if (!dbUser)
+                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-            const isMatch = await this.comparePasswords(password, dbUser.password);
-            if(isMatch) {
+            const isMatch = await this.comparePasswords(
+                password,
+                dbUser.password,
+            );
+            if (isMatch) {
                 await this.authRepository.delete(uuid);
-                return true
+                return true;
             }
 
             throw new HttpException('Invalid credentials', 409);
-        }catch (error: unknown) {
+        } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
                 throw error;

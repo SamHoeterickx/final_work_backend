@@ -1,5 +1,5 @@
-import { registerEnumType } from "@nestjs/graphql";
-import { UserStreaks } from "../../modules/auth/entity/user_streak.entity";
+import { registerEnumType } from '@nestjs/graphql';
+import { UserStreaks } from '../../modules/auth/entity/user_streak.entity';
 
 export enum UserRoleType {
     ADMIN = 'ADMIN',
@@ -7,7 +7,7 @@ export enum UserRoleType {
 }
 registerEnumType(UserRoleType, {
     name: 'EUserRoleType',
-})
+});
 
 export interface IUserTokens {
     accessToken: string;
@@ -31,11 +31,11 @@ export interface IEmailOptions {
 
 export interface IHandleStreakUpdate {
     prevStreak: number;
-    newStreak: number; 
+    newStreak: number;
     streak: UserStreaks;
 }
 
-export interface IUpdateXP extends IHandleStreakUpdate{
+export interface IUpdateXP extends IHandleStreakUpdate {
     prevUserXP: number;
     newUserXP: number;
 }
@@ -44,7 +44,7 @@ export enum EProgressStatus {
     LOCKED = 'LOCKED',
     UNLOCKED = 'UNLOCKED',
     INPROGRESS = 'IN_PROGRESS',
-    COMPLETED = 'COMPLETED'
+    COMPLETED = 'COMPLETED',
 }
 registerEnumType(EProgressStatus, {
     name: 'EProgressStatus',
@@ -61,12 +61,12 @@ export enum ETagOptions {
     HISTORY = 'HISTORY',
     ETHICS = 'ETHICS',
     BIOLOGY = 'BIOLOGY',
-    ADVANCED = 'ADVANCED'
+    ADVANCED = 'ADVANCED',
 }
 
 export enum EUserLevels {
-    BEGINNER = 'BEGINNER'
+    BEGINNER = 'BEGINNER',
 }
 registerEnumType(EUserLevels, {
     name: 'EUserLevels',
-})
+});

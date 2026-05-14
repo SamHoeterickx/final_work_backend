@@ -1,6 +1,14 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./user.entity";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    JoinColumn,
+    OneToOne,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { User } from './user.entity';
 
 @ObjectType()
 @Entity('user_streaks')
@@ -17,11 +25,10 @@ export class UserStreaks {
     @Column({ default: 0 })
     longestStreak: number;
 
-
     @Field(() => Date, { nullable: true })
-    @Column({ 
-        type: 'timestamp', 
-        nullable: true 
+    @Column({
+        type: 'timestamp',
+        nullable: true,
     })
     lastCompletedDate: Date | null;
 
@@ -34,5 +41,4 @@ export class UserStreaks {
 
     @UpdateDateColumn()
     updated_at: Date;
-    
 }

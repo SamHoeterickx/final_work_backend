@@ -1,4 +1,11 @@
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+    Args,
+    Mutation,
+    Parent,
+    Query,
+    ResolveField,
+    Resolver,
+} from '@nestjs/graphql';
 import { LessonsService } from './lessons.service';
 import { EProgressStatus } from '../../shared/types/types';
 import { UseGuards } from '@nestjs/common';
@@ -18,26 +25,30 @@ export class LessonsResolver {
     @Query(() => Lesson)
     async startLesson(
         @Args('input') input: StartLessonDto,
-        @CurrentUser() user: User
+        @CurrentUser() user: User,
     ): Promise<Lesson> {
-        return await this.lessonsService.startLesson(input.lessonUuid, user.uuid)
+        return await this.lessonsService.startLesson(
+            input.lessonUuid,
+            user.uuid,
+        );
     }
-
 
     @ResolveField(() => EProgressStatus)
     async status(
         @Parent() lesson: Lesson,
-        @CurrentUser() user: User
+        @CurrentUser() user: User,
     ): Promise<EProgressStatus> {
-        return await this.lessonsService.getLessonStatusForUser(lesson.uuid, user.uuid);
+        return await this.lessonsService.getLessonStatusForUser(
+            lesson.uuid,
+            user.uuid,
+        );
     }
 
     @Mutation(() => CompleteLessonResponse)
     async completeLesson(
         @CurrentUser() user: User,
-        @Args('input') input: CompleteLessonDto
-    ): Promise<CompleteLessonResponse> {
+        @Args('input') input: CompleteLessonDto,
+    ): Promise<CompleteLessonResponse | boolean> {
         return this.lessonsService.completeLesson(input.lessonUuid, user.uuid);
     }
-
 }

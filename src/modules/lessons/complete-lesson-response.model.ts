@@ -5,20 +5,26 @@ import { Chapter } from '../chapters/entity/chapter.entity';
 
 @ObjectType()
 export class CompleteLessonResponse {
-    @Field(() => Int)
-    prevUserXP: number;
+    @Field(() => Boolean)
+    success: boolean;
 
-    @Field(() => Int)
-    newUserXP: number;
+    @Field()
+    message: string;
 
-    @Field(() => Int)
-    prevStreak: number;
+    @Field(() => Int, { nullable: true })
+    prevUserXP: number | null;
 
-    @Field(() => Int)
-    newStreak: number;
+    @Field(() => Int, { nullable: true })
+    newUserXP: number | null;
 
-    @Field(() => UserStreaks)
-    streak: UserStreaks;
+    @Field(() => Int, { nullable: true })
+    prevStreak: number | null;
+
+    @Field(() => Int, { nullable: true })
+    newStreak: number | null;
+
+    @Field(() => UserStreaks, { nullable: true })
+    streak: UserStreaks | null;
 
     @Field(() => Boolean)
     isLastLesson: boolean;
@@ -28,4 +34,7 @@ export class CompleteLessonResponse {
 
     @Field(() => Chapter, { nullable: true })
     newUnlockedChapter: Chapter | null;
+
+    @Field(() => Boolean, { defaultValue: false })
+    alreadyCompleted: boolean;
 }

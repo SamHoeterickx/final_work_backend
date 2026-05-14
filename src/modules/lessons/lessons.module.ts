@@ -13,9 +13,9 @@ import { TokenService } from '../../shared/token/token.service';
     imports: [
         TypeOrmModule.forFeature([Lesson, LessonUser, ChapterUser]),
         AuthModule,
-        XpModule
+        XpModule,
     ],
     providers: [LessonsResolver, LessonsService, TokenService],
-    exports: [LessonsService]
+    exports: [LessonsService],
 })
 export class LessonsModule {}

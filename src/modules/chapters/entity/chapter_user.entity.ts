@@ -1,8 +1,14 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Chapter } from "./chapter.entity";
-import { EProgressStatus } from "../../../shared/types/types";
-import { User } from "../../auth/entity/user.entity";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Chapter } from './chapter.entity';
+import { EProgressStatus } from '../../../shared/types/types';
+import { User } from '../../auth/entity/user.entity';
 
 @ObjectType()
 @Entity('chapter_user')
@@ -23,7 +29,7 @@ export class ChapterUser {
     @Column({
         type: 'enum',
         enum: EProgressStatus,
-        default: EProgressStatus.LOCKED
+        default: EProgressStatus.LOCKED,
     })
     status: EProgressStatus;
 

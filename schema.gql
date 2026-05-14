@@ -26,14 +26,17 @@ input CompleteLessonDto {
 }
 
 type CompleteLessonResponse {
+  alreadyCompleted: Boolean!
   isLastLesson: Boolean!
-  newStreak: Int!
+  message: String!
+  newStreak: Int
   newUnlockedChapter: Chapter
   newUnlockedLesson: Lesson
-  newUserXP: Int!
-  prevStreak: Int!
-  prevUserXP: Int!
-  streak: UserStreaks!
+  newUserXP: Int
+  prevStreak: Int
+  prevUserXP: Int
+  streak: UserStreaks
+  success: Boolean!
 }
 
 input CreateUserDto {

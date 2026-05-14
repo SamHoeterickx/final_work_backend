@@ -5,10 +5,8 @@ import { User } from '../auth/entity/user.entity';
 import { UserStreaks } from '../auth/entity/user_streak.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([User, UserStreaks])
-    ],
+    imports: [TypeOrmModule.forFeature([User, UserStreaks])],
     providers: [XpService],
-    exports: [XpService]
+    exports: [XpService],
 })
 export class XpModule {}

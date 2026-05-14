@@ -15,7 +15,12 @@ import { ChapterUserSubscriber } from '../../shared/subscribers/chapter_user.sub
         AuthModule,
         LessonsModule,
     ],
-    providers: [ChapterUserSubscriber, ChaptersResolver, ChaptersService, TokenService],
-    exports: [ChaptersService]
+    providers: [
+        ChapterUserSubscriber,
+        ChaptersResolver,
+        ChaptersService,
+        TokenService,
+    ],
+    exports: [ChaptersService],
 })
 export class ChaptersModule {}

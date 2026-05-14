@@ -13,7 +13,7 @@ import { ResendService } from '../resend/resend.service';
     imports: [
         TypeOrmModule.forFeature([User, UserProfile]),
         ConfigModule,
-        SharedModule
+        SharedModule,
     ],
     providers: [AuthService, AuthResolver, TokenService, ResendService],
     exports: [AuthService],

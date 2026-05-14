@@ -1,7 +1,13 @@
-import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Chapter } from "../../chapters/entity/chapter.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { EProgressStatus } from "../../../shared/types/types";
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Chapter } from '../../chapters/entity/chapter.entity';
+import {
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToOne,
+    PrimaryGeneratedColumn,
+} from 'typeorm';
+import { EProgressStatus } from '../../../shared/types/types';
 
 @ObjectType()
 @Entity('lessons')
@@ -20,17 +26,14 @@ export class Lesson {
 
     @Field()
     @Column()
-    estimatedDuration: number;  
+    estimatedDuration: number;
 
     @Field()
-    @Column({ type: "text" })
+    @Column({ type: 'text' })
     content: string;
 
     @Field(() => Chapter, { nullable: true })
-    @ManyToOne(
-        () => Chapter,
-        (chapter) => chapter.lessons
-    )
+    @ManyToOne(() => Chapter, (chapter) => chapter.lessons)
     chapter: Chapter;
 
     @Field(() => EProgressStatus)

@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { EUserLevels, UserRoleType } from "../../../shared/types/types";
+import { Field, ObjectType } from '@nestjs/graphql';
+import { EUserLevels, UserRoleType } from '../../../shared/types/types';
 
 @ObjectType()
 export class UserData {
@@ -13,5 +13,5 @@ export class UserData {
     role: UserRoleType;
 
     @Field()
-    level: EUserLevels
+    level: EUserLevels;
 }
