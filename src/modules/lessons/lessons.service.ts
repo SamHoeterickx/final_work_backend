@@ -18,6 +18,41 @@ export class LessonsService {
         private xpService: XpService,
     ) {}
 
+    public async startLesson(lessonUuid: string, userUuid: string): Promise<Lesson> {
+        try{
+
+            const lessonUser = await this.lessonUserRepository.findOne({
+                where: {
+                    lesson: { uuid: lessonUuid },
+                    user: { uuid: userUuid }
+                },
+                relations: ['lesson']
+            });
+
+            if(!lessonUser){
+                throw new HttpException('No lesson progress found', HttpStatus.NOT_FOUND);
+            }
+
+            if(lessonUser.status === EProgressStatus.LOCKED){
+                throw new HttpException('This lesson is still locked', HttpStatus.FORBIDDEN)
+            }
+
+            if (lessonUser.status === EProgressStatus.COMPLETED || lessonUser.status === EProgressStatus.INPROGRESS) {
+                return lessonUser.lesson;
+            }
+
+            await this.lessonUserRepository.update(lessonUser.uuid, {status: EProgressStatus.INPROGRESS});
+
+            return lessonUser.lesson;
+
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(`Failed to start lesson: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+
     public async getLessonStatusForUser(lessonUuid: string, userUuid: string): Promise<EProgressStatus> {
         try {
             const progress = await this.lessonUserRepository.findOne({

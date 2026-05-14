@@ -114,6 +114,7 @@ type Query {
   getMyChapters: [ChapterUser!]!
   getUserData: UserData!
   healthCheck: String!
+  startLesson(input: StartLessonDto!): Lesson!
 }
 
 input RefreshTokenDto {
@@ -131,6 +132,10 @@ input ResetPasswordWithCodeDto {
   newPassword: String!
   repeatNewPassword: String!
   resetCode: String!
+}
+
+input StartLessonDto {
+  lessonUuid: String!
 }
 
 input UpdateEmailDto {
