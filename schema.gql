@@ -56,6 +56,12 @@ input DeleteUserDto {
   password: String!
 }
 
+enum ELocales {
+  EN
+  FR
+  NL
+}
+
 enum EProgressStatus {
   COMPLETED
   INPROGRESS
@@ -98,6 +104,7 @@ type Mutation {
   resetPasswordWithCode(input: ResetPasswordWithCodeDto!): UserTokens!
   unlockNewChapter: Boolean!
   updateEmail(input: UpdateEmailDto!): Boolean!
+  updatePreferenceLanguage(input: UpdateLanguageDto!): Boolean!
   updateUserName(input: UpdateUsernameDto!): Boolean!
   verifyPasswordResetCode(input: VerifyPasswordResetCodeDto!): Boolean!
 }
@@ -115,6 +122,7 @@ input OnboardingInput {
 type Query {
   getHello: String!
   getMyChapters: [ChapterUser!]!
+  getPreferenceLanugage: ELocales!
   getUserData: UserData!
   healthCheck: String!
   startLesson(input: StartLessonDto!): Lesson!
@@ -143,6 +151,10 @@ input StartLessonDto {
 
 input UpdateEmailDto {
   updatedEmailAdress: String!
+}
+
+input UpdateLanguageDto {
+  language: String!
 }
 
 input UpdateUsernameDto {

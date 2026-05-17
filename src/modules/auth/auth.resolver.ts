@@ -16,6 +16,8 @@ import { UserData } from './models/user-data.model';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
+import { UpdateLanguageDto } from './dto/updateLanguage.dto';
+import { ELocales } from '../../shared/types/types';
 
 @Resolver()
 export class AuthResolver {
@@ -30,6 +32,12 @@ export class AuthResolver {
     @UseGuards(GqlAuthGuard)
     public async getUserData(@CurrentUser() user: User): Promise<UserData> {
         return await this.authService.getUserData(user.uuid);
+    }
+
+    @Query(() => ELocales)
+    @UseGuards(GqlAuthGuard)
+    public async getPreferenceLanugage(@CurrentUser() user: User): Promise<ELocales> {
+        return await this.authService.getPreferenceLanguage(user.uuid);
     }
 
     @Mutation(() => UserTokens)
@@ -114,5 +122,14 @@ export class AuthResolver {
         @Args('input') input: DeleteUserDto,
     ): Promise<boolean> {
         return await this.authService.deleteUser(user.uuid, input);
+    }
+
+    @Mutation(() => Boolean)
+    @UseGuards(GqlAuthGuard)
+    public async updatePreferenceLanguage(
+        @CurrentUser() user: User,
+        @Args('input') input: UpdateLanguageDto,
+    ): Promise<boolean>{
+        return await this.authService.updatePrefenceLanguage(user.uuid, input);
     }
 }

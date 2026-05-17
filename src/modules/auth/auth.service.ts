@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IUserTokens, IOnboardingData } from '../../shared/types/types';
+import { IUserTokens, IOnboardingData, ELocales } from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
@@ -25,6 +25,7 @@ import { UserData } from './models/user-data.model';
 import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
+import { UpdateLanguageDto } from './dto/updateLanguage.dto';
 
 @Injectable()
 export class AuthService {
@@ -578,6 +579,49 @@ export class AuthService {
             }
             throw new InternalServerErrorException(
                 `Failed to delete user: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async updatePrefenceLanguage(userUuid: string, locale: UpdateLanguageDto): Promise<boolean> {
+        try{
+
+            await this.authRepository.update(userUuid, {
+                language: locale.language
+            });
+
+            return true
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to update preference language for user: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async getPreferenceLanguage(userUuid: string,): Promise <ELocales> {
+        try{
+
+            const eUser = await this.authRepository.findOne({
+                where: { uuid: userUuid },
+                select: { language: true }
+            })
+            
+            if(!eUser){
+                throw new HttpException('No user found', HttpStatus.NOT_FOUND);
+            }
+
+            return eUser.language;
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed to update preference language for user: ${error instanceof Error ? error.message : String(error)}`,
             );
         }
     }
