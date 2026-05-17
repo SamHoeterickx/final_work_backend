@@ -11,7 +11,4 @@ export class UserData {
 
     @Field()
     role: UserRoleType;
-
-    @Field()
-    level: EUserLevels;
 }

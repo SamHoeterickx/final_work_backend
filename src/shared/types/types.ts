@@ -70,3 +70,13 @@ export enum EUserLevels {
 registerEnumType(EUserLevels, {
     name: 'EUserLevels',
 });
+
+
+export enum ELocales {
+    NL = 'nl',
+    FR = 'fr',
+    EN = 'en'
+};
+registerEnumType( ELocales, {
+    name: 'ELocales'
+})

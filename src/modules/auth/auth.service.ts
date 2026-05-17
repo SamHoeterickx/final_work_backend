@@ -55,7 +55,6 @@ export class AuthService {
                     name: true,
                     email: true,
                     role: true,
-                    level: true,
                 },
             });
 

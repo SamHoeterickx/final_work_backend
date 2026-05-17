@@ -1,5 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { EUserLevels, UserRoleType } from '../../../shared/types/types';
+import { ELocales, UserRoleType } from '../../../shared/types/types';
 import {
     Column,
     CreateDateColumn,
@@ -36,14 +36,6 @@ export class User {
     role: UserRoleType;
 
     @Field()
-    @Column({
-        type: 'enum',
-        enum: EUserLevels,
-        default: EUserLevels.BEGINNER,
-    })
-    level: EUserLevels;
-
-    @Field()
     @Column({ default: 0 })
     xp: number;
 
@@ -60,6 +52,14 @@ export class User {
     @Field(() => String, { nullable: true })
     @Column({ type: 'varchar', nullable: true })
     currentHashedRefreshToken: string | null;
+
+    @Field()
+    @Column({
+        type: 'enum',
+        enum: ELocales,
+        default: ELocales.EN
+    })
+    language: ELocales;
 
     @Field()
     @CreateDateColumn()

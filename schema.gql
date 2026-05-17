@@ -153,7 +153,7 @@ type User {
   created_at: DateTime!
   currentHashedRefreshToken: String
   email: String!
-  level: String!
+  language: String!
   name: String!
   role: String!
   streak: UserStreaks
@@ -163,7 +163,6 @@ type User {
 
 type UserData {
   email: String!
-  level: String!
   name: String!
   role: String!
 }
