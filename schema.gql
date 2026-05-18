@@ -122,7 +122,7 @@ input OnboardingInput {
 type Query {
   getHello: String!
   getMyChapters: [ChapterUser!]!
-  getPreferenceLanugage: ELocales!
+  getPreferenceLanguage: ELocales!
   getUserData: UserData!
   healthCheck: String!
   startLesson(input: StartLessonDto!): Lesson!
