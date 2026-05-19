@@ -34,7 +34,7 @@ export class ChaptersService {
         try {
             const uChapterProgress = await this.chapterProgressRepository.find({
                 where: { user: { uuid } },
-                relations: ['chapter', 'chapter.lessons'],
+                relations: ['chapter', 'chapter.lessons', 'chapter.lessons.translations'],
                 order: {
                     order: 'ASC',
                     chapter: {

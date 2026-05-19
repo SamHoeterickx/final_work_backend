@@ -73,17 +73,28 @@ input ForgotPasswordRequestDto {
   email: String!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Lesson {
   chapter: Chapter
-  content: String!
   created_at: DateTime!
-  description: String!
   estimatedDuration: Float!
-  name: String!
   order: Float!
   status: EProgressStatus!
+  translations: [LessonTranslation!]!
   uuid: ID!
   xp: Float!
+}
+
+type LessonTranslation {
+  content: JSON!
+  description: String!
+  languageCode: ELocales!
+  name: String!
+  uuid: ID!
 }
 
 input LoginUserDto {
@@ -125,7 +136,7 @@ type Query {
   getPreferenceLanguage: ELocales!
   getUserData: UserData!
   healthCheck: String!
-  startLesson(input: StartLessonDto!): Lesson!
+  startLesson(input: StartLessonDto!): StartLessonResponse!
 }
 
 input RefreshTokenDto {
@@ -146,7 +157,16 @@ input ResetPasswordWithCodeDto {
 }
 
 input StartLessonDto {
+  languageCode: String!
   lessonUuid: String!
+}
+
+type StartLessonResponse {
+  content: [LessonTranslation!]!
+  estimatedDuration: Int!
+  order: Int!
+  uuid: ID!
+  xp: Int!
 }
 
 input UpdateEmailDto {

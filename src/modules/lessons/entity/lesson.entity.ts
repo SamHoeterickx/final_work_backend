@@ -5,9 +5,11 @@ import {
     CreateDateColumn,
     Entity,
     ManyToOne,
+    OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EProgressStatus } from '../../../shared/types/types';
+import { LessonTranslation } from './lesson_translation.entity';
 
 @ObjectType()
 @Entity('lessons')
@@ -16,21 +18,17 @@ export class Lesson {
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
-    @Field()
-    @Column()
-    name: string;
-
-    @Field()
-    @Column()
-    description: string;
+    @Field(() => [LessonTranslation])
+    @OneToMany(
+        () => LessonTranslation,
+        (translation) => translation.lesson,
+        { cascade: true, eager: true }
+    )
+    translations: LessonTranslation[];
 
     @Field()
     @Column()
     estimatedDuration: number;
-
-    @Field()
-    @Column({ type: 'text' })
-    content: string;
 
     @Field(() => Chapter, { nullable: true })
     @ManyToOne(() => Chapter, (chapter) => chapter.lessons)

@@ -12,7 +12,10 @@ import { EProgressStatus } from '../../shared/types/types';
 import { XpService } from '../xp/xp.service';
 import { ChapterUser } from '../chapters/entity/chapter_user.entity';
 import { Chapter } from '../chapters/entity/chapter.entity';
-import { CompleteLessonResponse } from './complete-lesson-response.model';
+import { CompleteLessonResponse } from './models/complete-lesson-response.model';
+import { StartLessonDto } from './dto/startLesson.dto';
+import { StartLessonResponse } from './models/start-lesson-response.model';
+import { LessonTranslation } from './entity/lesson_translation.entity';
 
 @Injectable()
 export class LessonsService {
@@ -26,10 +29,12 @@ export class LessonsService {
     ) {}
 
     public async startLesson(
-        lessonUuid: string,
+        input: StartLessonDto,
         userUuid: string,
-    ): Promise<Lesson> {
+    ): Promise<StartLessonResponse> {
         try {
+            const { lessonUuid, languageCode } = input;
+
             const lessonUser = await this.lessonUserRepository.findOne({
                 where: {
                     lesson: { uuid: lessonUuid },
@@ -56,14 +61,29 @@ export class LessonsService {
                 lessonUser.status === EProgressStatus.COMPLETED ||
                 lessonUser.status === EProgressStatus.INPROGRESS
             ) {
-                return lessonUser.lesson;
+                return {
+                    uuid: lessonUser.lesson.uuid,
+                    estimatedDuration: lessonUser.lesson.estimatedDuration,
+                    xp: lessonUser.lesson.xp,
+                    order: lessonUser.lesson.order,
+                    content: lessonUser.lesson.translations.filter((translation: LessonTranslation) => translation.languageCode === languageCode)
+                }
             }
 
             await this.lessonUserRepository.update(lessonUser.uuid, {
                 status: EProgressStatus.INPROGRESS,
             });
 
-            return lessonUser.lesson;
+            console.log(languageCode);
+
+            return {
+                uuid: lessonUser.lesson.uuid,
+                estimatedDuration: lessonUser.lesson.estimatedDuration,
+                xp: lessonUser.lesson.xp,
+                order: lessonUser.lesson.order,
+                content: lessonUser.lesson.translations.filter((translation: LessonTranslation) => translation.languageCode === languageCode)
+            }
+
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;

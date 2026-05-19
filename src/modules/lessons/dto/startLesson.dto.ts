@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
+import { ELocales } from '../../../shared/types/types';
 
 @InputType()
 export class StartLessonDto {
@@ -7,4 +8,8 @@ export class StartLessonDto {
     @IsNotEmpty()
     @IsUUID()
     lessonUuid: string;
+
+    @Field()
+    @IsEnum(ELocales)
+    languageCode: ELocales;
 }

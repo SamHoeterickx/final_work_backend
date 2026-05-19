@@ -40,6 +40,13 @@ export interface IUpdateXP extends IHandleStreakUpdate {
     newUserXP: number;
 }
 
+export interface ILessonTranslations {
+    name: string;
+    description: string;
+    languageCode: ELocales;
+    content: any[]
+}
+
 export enum EProgressStatus {
     LOCKED = 'LOCKED',
     UNLOCKED = 'UNLOCKED',

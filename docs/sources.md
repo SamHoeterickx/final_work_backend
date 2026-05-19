@@ -8,3 +8,4 @@
 - [Dockerize NestJs](https://gist.github.com/mjex11/c13799fb1c6f8edc50b5f8246a54cff2)
 - [Dockerize NestJs](https://dev.to/code42cate/how-to-dockerize-nestjs-327j)
 - [Resend mail service](https://resend.com/)
+- [GEMINI CHAT - Lesson entity with translations](https://gemini.google.com/share/89f1ecff0e19)

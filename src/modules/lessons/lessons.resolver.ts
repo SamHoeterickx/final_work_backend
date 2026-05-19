@@ -14,21 +14,22 @@ import { Lesson } from './entity/lesson.entity';
 import { User } from '../auth/entity/user.entity';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
 import { CompleteLessonDto } from './dto/completeLesson.dto';
-import { CompleteLessonResponse } from './complete-lesson-response.model';
+import { CompleteLessonResponse } from './models/complete-lesson-response.model';
 import { StartLessonDto } from './dto/startLesson.dto';
+import { StartLessonResponse } from './models/start-lesson-response.model';
 
 @Resolver(() => Lesson)
 @UseGuards(GqlAuthGuard)
 export class LessonsResolver {
     constructor(private readonly lessonsService: LessonsService) {}
 
-    @Query(() => Lesson)
+    @Query(() => StartLessonResponse)
     async startLesson(
         @Args('input') input: StartLessonDto,
         @CurrentUser() user: User,
-    ): Promise<Lesson> {
+    ): Promise<StartLessonResponse> {
         return await this.lessonsService.startLesson(
-            input.lessonUuid,
+            input,
             user.uuid,
         );
     }
