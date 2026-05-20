@@ -39,7 +39,7 @@ export class ChaptersService {
                     order: 'ASC',
                     chapter: {
                         lessons: {
-                            order: 'ASC',
+                            order: 'DESC',
                         },
                     },
                 },

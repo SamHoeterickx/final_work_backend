@@ -4,9 +4,9 @@
 
 type Chapter {
   created_at: DateTime!
-  description: String!
+  description: JSON!
   lessons: [Lesson!]
-  name: String!
+  name: JSON!
   slug: String!
   tags: [String!]!
   uuid: ID!
