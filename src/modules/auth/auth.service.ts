@@ -53,17 +53,26 @@ export class AuthService {
             const eUser = await this.authRepository.findOne({
                 where: { uuid },
                 select: {
+                    uuid: true,
                     name: true,
                     email: true,
+                    xp: true,
                     role: true,
                 },
+                relations: ['streak']
             });
 
             if (!eUser) {
                 throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 
-            return eUser;
+            return {
+                name: eUser.name,
+                email: eUser.email,
+                role: eUser.role,
+                xp: eUser.xp,
+                streaks: eUser.streak,
+            };
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {

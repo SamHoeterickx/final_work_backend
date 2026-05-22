@@ -21,13 +21,10 @@ type ChapterUser {
   uuid: ID!
 }
 
-input CompleteLessonDto {
-  lessonUuid: String!
-}
-
 type CompleteLessonResponse {
   alreadyCompleted: Boolean!
   isLastLesson: Boolean!
+  isStreakUpdated: Boolean!
   message: String!
   newStreak: Int
   newUnlockedChapter: Chapter
@@ -89,6 +86,11 @@ type Lesson {
   xp: Float!
 }
 
+input LessonDto {
+  languageCode: String!
+  lessonUuid: String!
+}
+
 type LessonTranslation {
   content: JSON!
   description: String!
@@ -103,7 +105,7 @@ input LoginUserDto {
 }
 
 type Mutation {
-  completeLesson(input: CompleteLessonDto!): CompleteLessonResponse!
+  completeLesson(input: LessonDto!): CompleteLessonResponse!
   deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
   generateCustomRoadmap: Boolean!
@@ -136,7 +138,7 @@ type Query {
   getPreferenceLanguage: ELocales!
   getUserData: UserData!
   healthCheck: String!
-  startLesson(input: StartLessonDto!): StartLessonResponse!
+  startLesson(input: LessonDto!): StartLessonResponse!
 }
 
 input RefreshTokenDto {
@@ -154,11 +156,6 @@ input ResetPasswordWithCodeDto {
   newPassword: String!
   repeatNewPassword: String!
   resetCode: String!
-}
-
-input StartLessonDto {
-  languageCode: String!
-  lessonUuid: String!
 }
 
 type StartLessonResponse {
@@ -197,6 +194,8 @@ type UserData {
   email: String!
   name: String!
   role: String!
+  streaks: UserStreaks!
+  xp: Float!
 }
 
 type UserStreaks {

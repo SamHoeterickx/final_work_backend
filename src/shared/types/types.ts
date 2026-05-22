@@ -33,6 +33,7 @@ export interface IHandleStreakUpdate {
     prevStreak: number;
     newStreak: number;
     streak: UserStreaks;
+    isStreaksUpdated: boolean;
 }
 
 export interface IUpdateXP extends IHandleStreakUpdate {

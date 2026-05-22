@@ -3,7 +3,7 @@ import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
 import { ELocales } from '../../../shared/types/types';
 
 @InputType()
-export class StartLessonDto {
+export class LessonDto {
     @Field()
     @IsNotEmpty()
     @IsUUID()

@@ -1,5 +1,4 @@
 import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { EProgressStatus } from "../../../shared/types/types";
 import { LessonTranslation } from "../entity/lesson_translation.entity";
 
 @ObjectType()

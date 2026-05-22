@@ -13,7 +13,7 @@ import { XpService } from '../xp/xp.service';
 import { ChapterUser } from '../chapters/entity/chapter_user.entity';
 import { Chapter } from '../chapters/entity/chapter.entity';
 import { CompleteLessonResponse } from './models/complete-lesson-response.model';
-import { StartLessonDto } from './dto/startLesson.dto';
+import { LessonDto } from './dto/lesson.dto';
 import { StartLessonResponse } from './models/start-lesson-response.model';
 import { LessonTranslation } from './entity/lesson_translation.entity';
 
@@ -29,7 +29,7 @@ export class LessonsService {
     ) {}
 
     public async startLesson(
-        input: StartLessonDto,
+        input: LessonDto,
         userUuid: string,
     ): Promise<StartLessonResponse> {
         try {
@@ -116,10 +116,12 @@ export class LessonsService {
     }
 
     public async completeLesson(
-        lessonUuid: string,
+        input: LessonDto,
         userUuid: string,
     ): Promise<CompleteLessonResponse | boolean> {
         try {
+            const { lessonUuid, languageCode } = input;
+            
             const lesson = await this.lessonRepository.findOne({
                 where: { uuid: lessonUuid },
                 order: {
@@ -162,6 +164,7 @@ export class LessonsService {
                     prevStreak: 0,
                     newStreak: 0,
                     streak: null,
+                    isStreakUpdated: false,
                     isLastLesson: false,
                     newUnlockedLesson: null,
                     newUnlockedChapter: null,
@@ -196,7 +199,7 @@ export class LessonsService {
                         lesson: { uuid: nextLesson.uuid },
                         user: { uuid: userUuid },
                     },
-                    relations: ['lesson'],
+                    relations: ['lesson', 'lesson.translations'],
                 });
 
                 if (!nextLessonUser) {
@@ -210,6 +213,12 @@ export class LessonsService {
                     status: EProgressStatus.UNLOCKED,
                 });
                 newUnlockedLesson = nextLessonUser.lesson;
+                if (newUnlockedLesson.translations) {
+                    newUnlockedLesson.translations = newUnlockedLesson.translations.filter(
+                        (translation: LessonTranslation) =>
+                            translation.languageCode === languageCode,
+                    );
+                }
             }
 
             if (isLastLesson) {
@@ -253,6 +262,7 @@ export class LessonsService {
                 success: true,
                 message: 'Lesson completed successfully',
                 ...updatedXP,
+                isStreakUpdated: updatedXP.isStreaksUpdated,
                 isLastLesson,
                 newUnlockedLesson,
                 newUnlockedChapter,

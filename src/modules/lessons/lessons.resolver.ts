@@ -13,9 +13,8 @@ import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 import { Lesson } from './entity/lesson.entity';
 import { User } from '../auth/entity/user.entity';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
-import { CompleteLessonDto } from './dto/completeLesson.dto';
 import { CompleteLessonResponse } from './models/complete-lesson-response.model';
-import { StartLessonDto } from './dto/startLesson.dto';
+import { LessonDto } from './dto/lesson.dto';
 import { StartLessonResponse } from './models/start-lesson-response.model';
 
 @Resolver(() => Lesson)
@@ -25,7 +24,7 @@ export class LessonsResolver {
 
     @Query(() => StartLessonResponse)
     async startLesson(
-        @Args('input') input: StartLessonDto,
+        @Args('input') input: LessonDto,
         @CurrentUser() user: User,
     ): Promise<StartLessonResponse> {
         return await this.lessonsService.startLesson(
@@ -48,8 +47,8 @@ export class LessonsResolver {
     @Mutation(() => CompleteLessonResponse)
     async completeLesson(
         @CurrentUser() user: User,
-        @Args('input') input: CompleteLessonDto,
+        @Args('input') input: LessonDto,
     ): Promise<CompleteLessonResponse | boolean> {
-        return this.lessonsService.completeLesson(input.lessonUuid, user.uuid);
+        return this.lessonsService.completeLesson(input, user.uuid);
     }
 }

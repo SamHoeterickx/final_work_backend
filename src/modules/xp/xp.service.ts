@@ -99,8 +99,7 @@ export class XpService {
 
     private async handleStreakUpdate(user: User): Promise<IHandleStreakUpdate> {
         let streak = user.streak;
-
-        const prevStreak = streak.currentStreak;
+        let isStreaksUpdated = false;
 
         if (!streak) {
             streak = this.streakRepository.create({
@@ -110,6 +109,8 @@ export class XpService {
                 lastCompletedDate: null,
             });
         }
+
+        const prevStreak = streak.currentStreak;
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -127,6 +128,7 @@ export class XpService {
             if (diffDays === 1) {
                 streak.currentStreak += 1;
                 streak.lastCompletedDate = today;
+                isStreaksUpdated = true
             } else if (diffDays > 1) {
                 streak.currentStreak = 1;
                 streak.lastCompletedDate = today;
@@ -147,6 +149,7 @@ export class XpService {
             prevStreak,
             newStreak,
             streak: uStreak,
+            isStreaksUpdated
         };
     }
 }

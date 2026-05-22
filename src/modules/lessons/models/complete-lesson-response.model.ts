@@ -27,6 +27,9 @@ export class CompleteLessonResponse {
     streak: UserStreaks | null;
 
     @Field(() => Boolean)
+    isStreakUpdated: boolean;
+
+    @Field(() => Boolean)
     isLastLesson: boolean;
 
     @Field(() => Lesson, { nullable: true })
