@@ -12,7 +12,10 @@ import { EProgressStatus } from '../../shared/types/types';
 import { XpService } from '../xp/xp.service';
 import { ChapterUser } from '../chapters/entity/chapter_user.entity';
 import { Chapter } from '../chapters/entity/chapter.entity';
-import { CompleteLessonResponse } from './complete-lesson-response.model';
+import { CompleteLessonResponse } from './models/complete-lesson-response.model';
+import { LessonDto } from './dto/lesson.dto';
+import { StartLessonResponse } from './models/start-lesson-response.model';
+import { LessonTranslation } from './entity/lesson_translation.entity';
 
 @Injectable()
 export class LessonsService {
@@ -26,10 +29,12 @@ export class LessonsService {
     ) {}
 
     public async startLesson(
-        lessonUuid: string,
+        input: LessonDto,
         userUuid: string,
-    ): Promise<Lesson> {
+    ): Promise<StartLessonResponse> {
         try {
+            const { lessonUuid, languageCode } = input;
+
             const lessonUser = await this.lessonUserRepository.findOne({
                 where: {
                     lesson: { uuid: lessonUuid },
@@ -56,14 +61,34 @@ export class LessonsService {
                 lessonUser.status === EProgressStatus.COMPLETED ||
                 lessonUser.status === EProgressStatus.INPROGRESS
             ) {
-                return lessonUser.lesson;
+                return {
+                    uuid: lessonUser.lesson.uuid,
+                    estimatedDuration: lessonUser.lesson.estimatedDuration,
+                    xp: lessonUser.lesson.xp,
+                    order: lessonUser.lesson.order,
+                    content: lessonUser.lesson.translations.filter(
+                        (translation: LessonTranslation) =>
+                            translation.languageCode === languageCode,
+                    ),
+                };
             }
 
             await this.lessonUserRepository.update(lessonUser.uuid, {
                 status: EProgressStatus.INPROGRESS,
             });
 
-            return lessonUser.lesson;
+            console.log(languageCode);
+
+            return {
+                uuid: lessonUser.lesson.uuid,
+                estimatedDuration: lessonUser.lesson.estimatedDuration,
+                xp: lessonUser.lesson.xp,
+                order: lessonUser.lesson.order,
+                content: lessonUser.lesson.translations.filter(
+                    (translation: LessonTranslation) =>
+                        translation.languageCode === languageCode,
+                ),
+            };
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
@@ -96,10 +121,12 @@ export class LessonsService {
     }
 
     public async completeLesson(
-        lessonUuid: string,
+        input: LessonDto,
         userUuid: string,
     ): Promise<CompleteLessonResponse | boolean> {
         try {
+            const { lessonUuid, languageCode } = input;
+
             const lesson = await this.lessonRepository.findOne({
                 where: { uuid: lessonUuid },
                 order: {
@@ -142,6 +169,7 @@ export class LessonsService {
                     prevStreak: 0,
                     newStreak: 0,
                     streak: null,
+                    isStreakUpdated: false,
                     isLastLesson: false,
                     newUnlockedLesson: null,
                     newUnlockedChapter: null,
@@ -176,7 +204,7 @@ export class LessonsService {
                         lesson: { uuid: nextLesson.uuid },
                         user: { uuid: userUuid },
                     },
-                    relations: ['lesson'],
+                    relations: ['lesson', 'lesson.translations'],
                 });
 
                 if (!nextLessonUser) {
@@ -190,6 +218,13 @@ export class LessonsService {
                     status: EProgressStatus.UNLOCKED,
                 });
                 newUnlockedLesson = nextLessonUser.lesson;
+                if (newUnlockedLesson.translations) {
+                    newUnlockedLesson.translations =
+                        newUnlockedLesson.translations.filter(
+                            (translation: LessonTranslation) =>
+                                translation.languageCode === languageCode,
+                        );
+                }
             }
 
             if (isLastLesson) {
@@ -233,6 +268,7 @@ export class LessonsService {
                 success: true,
                 message: 'Lesson completed successfully',
                 ...updatedXP,
+                isStreakUpdated: updatedXP.isStreaksUpdated,
                 isLastLesson,
                 newUnlockedLesson,
                 newUnlockedChapter,

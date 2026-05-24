@@ -4,9 +4,9 @@
 
 type Chapter {
   created_at: DateTime!
-  description: String!
+  description: JSON!
   lessons: [Lesson!]
-  name: String!
+  name: JSON!
   slug: String!
   tags: [String!]!
   uuid: ID!
@@ -21,13 +21,10 @@ type ChapterUser {
   uuid: ID!
 }
 
-input CompleteLessonDto {
-  lessonUuid: String!
-}
-
 type CompleteLessonResponse {
   alreadyCompleted: Boolean!
   isLastLesson: Boolean!
+  isStreakUpdated: Boolean!
   message: String!
   newStreak: Int
   newUnlockedChapter: Chapter
@@ -73,17 +70,33 @@ input ForgotPasswordRequestDto {
   email: String!
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Lesson {
   chapter: Chapter
-  content: String!
   created_at: DateTime!
-  description: String!
   estimatedDuration: Float!
-  name: String!
   order: Float!
   status: EProgressStatus!
+  translations: [LessonTranslation!]!
   uuid: ID!
   xp: Float!
+}
+
+input LessonDto {
+  languageCode: String!
+  lessonUuid: String!
+}
+
+type LessonTranslation {
+  content: JSON!
+  description: String!
+  languageCode: ELocales!
+  name: String!
+  uuid: ID!
 }
 
 input LoginUserDto {
@@ -92,10 +105,10 @@ input LoginUserDto {
 }
 
 type Mutation {
-  completeLesson(input: CompleteLessonDto!): CompleteLessonResponse!
+  completeLesson(input: LessonDto!): CompleteLessonResponse!
   deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
-  generateCustomRoadmap: Boolean!
+  generateCustomRoadmap: Chapter!
   logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
@@ -125,7 +138,7 @@ type Query {
   getPreferenceLanguage: ELocales!
   getUserData: UserData!
   healthCheck: String!
-  startLesson(input: StartLessonDto!): Lesson!
+  startLesson(input: LessonDto!): StartLessonResponse!
 }
 
 input RefreshTokenDto {
@@ -145,8 +158,12 @@ input ResetPasswordWithCodeDto {
   resetCode: String!
 }
 
-input StartLessonDto {
-  lessonUuid: String!
+type StartLessonResponse {
+  content: [LessonTranslation!]!
+  estimatedDuration: Int!
+  order: Int!
+  uuid: ID!
+  xp: Int!
 }
 
 input UpdateEmailDto {
@@ -177,6 +194,8 @@ type UserData {
   email: String!
   name: String!
   role: String!
+  streaks: UserStreaks!
+  xp: Float!
 }
 
 type UserStreaks {

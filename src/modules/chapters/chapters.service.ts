@@ -34,7 +34,11 @@ export class ChaptersService {
         try {
             const uChapterProgress = await this.chapterProgressRepository.find({
                 where: { user: { uuid } },
-                relations: ['chapter', 'chapter.lessons'],
+                relations: [
+                    'chapter',
+                    'chapter.lessons',
+                    'chapter.lessons.translations',
+                ],
                 order: {
                     order: 'ASC',
                     chapter: {
@@ -70,9 +74,29 @@ export class ChaptersService {
      * * @param uuid - user uuid
      * @returns a Promise containing a boolean
      */
-    public async generateCustomRoadmap(uuid: string): Promise<boolean> {
+    public async generateCustomRoadmap(uuid: string): Promise<Chapter> {
         try {
             const userProfile = await this.authService.findUserProfile(uuid);
+
+            if (!userProfile) {
+                throw new HttpException(
+                    'No userprofile found',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+
+            const roadmapCount = await this.chapterProgressRepository.count({
+                where: {
+                    user: { uuid: userProfile.uuid },
+                },
+            });
+
+            if (roadmapCount > 0) {
+                throw new HttpException(
+                    'User already has a roadmap',
+                    HttpStatus.CONFLICT,
+                );
+            }
 
             const allChapters = await this.chapterRepository.find({
                 order: { created_at: 'ASC' },
@@ -105,7 +129,6 @@ export class ChaptersService {
 
             await this.chapterProgressRepository.save(chapterProgresses);
 
-            // Add entries for lesson_user for the chapter with order 1
             const firstChapter = customRoadmap[0];
             if (
                 firstChapter &&
@@ -131,7 +154,7 @@ export class ChaptersService {
                 await lessonUserRepo.save(lessonUserEntries);
             }
 
-            return true;
+            return firstChapter;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {

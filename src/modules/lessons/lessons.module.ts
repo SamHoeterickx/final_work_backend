@@ -8,10 +8,16 @@ import { AuthModule } from '../auth/auth.module';
 import { ChapterUser } from '../chapters/entity/chapter_user.entity';
 import { XpModule } from '../xp/xp.module';
 import { TokenService } from '../../shared/token/token.service';
+import { LessonTranslation } from './entity/lesson_translation.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Lesson, LessonUser, ChapterUser]),
+        TypeOrmModule.forFeature([
+            Lesson,
+            LessonUser,
+            ChapterUser,
+            LessonTranslation,
+        ]),
         AuthModule,
         XpModule,
     ],

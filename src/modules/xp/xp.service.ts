@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entity/user.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { UserStreaks } from '../auth/entity/user_streak.entity';
 import { IHandleStreakUpdate, IUpdateXP } from '../../shared/types/types';
 
@@ -97,10 +97,43 @@ export class XpService {
         }
     }
 
+    public async createUserStreaksEntry(
+        user: User,
+        manager?: EntityManager,
+    ): Promise<boolean> {
+        try {
+            const entry = this.streakRepository.create({
+                user: user,
+                currentStreak: 0,
+                longestStreak: 0,
+                lastCompletedDate: null,
+            });
+
+            const streak = manager
+                ? await manager.save(entry)
+                : await this.streakRepository.save(entry);
+
+            if (!streak) {
+                throw new InternalServerErrorException(
+                    'Failed to create user streaks entry',
+                );
+            }
+
+            return true;
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed update xp: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
     private async handleStreakUpdate(user: User): Promise<IHandleStreakUpdate> {
         let streak = user.streak;
-
-        const prevStreak = streak.currentStreak;
+        let isStreaksUpdated = false;
 
         if (!streak) {
             streak = this.streakRepository.create({
@@ -110,6 +143,8 @@ export class XpService {
                 lastCompletedDate: null,
             });
         }
+
+        const prevStreak = streak.currentStreak;
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -127,6 +162,7 @@ export class XpService {
             if (diffDays === 1) {
                 streak.currentStreak += 1;
                 streak.lastCompletedDate = today;
+                isStreaksUpdated = true;
             } else if (diffDays > 1) {
                 streak.currentStreak = 1;
                 streak.lastCompletedDate = today;
@@ -147,6 +183,7 @@ export class XpService {
             prevStreak,
             newStreak,
             streak: uStreak,
+            isStreaksUpdated,
         };
     }
 }

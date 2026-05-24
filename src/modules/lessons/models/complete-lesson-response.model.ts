@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { UserStreaks } from '../auth/entity/user_streak.entity';
-import { Lesson } from './entity/lesson.entity';
-import { Chapter } from '../chapters/entity/chapter.entity';
+import { UserStreaks } from '../../auth/entity/user_streak.entity';
+import { Lesson } from '../entity/lesson.entity';
+import { Chapter } from '../../chapters/entity/chapter.entity';
 
 @ObjectType()
 export class CompleteLessonResponse {
@@ -25,6 +25,9 @@ export class CompleteLessonResponse {
 
     @Field(() => UserStreaks, { nullable: true })
     streak: UserStreaks | null;
+
+    @Field(() => Boolean)
+    isStreakUpdated: boolean;
 
     @Field(() => Boolean)
     isLastLesson: boolean;

@@ -33,11 +33,19 @@ export interface IHandleStreakUpdate {
     prevStreak: number;
     newStreak: number;
     streak: UserStreaks;
+    isStreaksUpdated: boolean;
 }
 
 export interface IUpdateXP extends IHandleStreakUpdate {
     prevUserXP: number;
     newUserXP: number;
+}
+
+export interface ILessonTranslations {
+    name: string;
+    description: string;
+    languageCode: ELocales;
+    content: any[];
 }
 
 export enum EProgressStatus {
@@ -71,12 +79,24 @@ registerEnumType(EUserLevels, {
     name: 'EUserLevels',
 });
 
-
 export enum ELocales {
     NL = 'nl',
     FR = 'fr',
-    EN = 'en'
-};
-registerEnumType( ELocales, {
-    name: 'ELocales'
-})
+    EN = 'en',
+}
+registerEnumType(ELocales, {
+    name: 'ELocales',
+});
+
+export enum ELessonScreenOptions {
+    C_TITLE,
+    C_DID_YOU_KNOW,
+    C_TEXT_WITH_IMAGE,
+    C_ONLY_TEXT,
+    Q_RIGHT_OR_WRONG,
+    Q_MATCH,
+    Q_CLICK_AND_FOCUS,
+}
+registerEnumType(ELessonScreenOptions, {
+    name: 'ELessonScreenOptions',
+});

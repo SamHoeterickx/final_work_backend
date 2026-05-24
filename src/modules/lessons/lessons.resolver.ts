@@ -13,24 +13,21 @@ import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 import { Lesson } from './entity/lesson.entity';
 import { User } from '../auth/entity/user.entity';
 import { CurrentUser } from '../../shared/decorators/currentUser.decorator';
-import { CompleteLessonDto } from './dto/completeLesson.dto';
-import { CompleteLessonResponse } from './complete-lesson-response.model';
-import { StartLessonDto } from './dto/startLesson.dto';
+import { CompleteLessonResponse } from './models/complete-lesson-response.model';
+import { LessonDto } from './dto/lesson.dto';
+import { StartLessonResponse } from './models/start-lesson-response.model';
 
 @Resolver(() => Lesson)
 @UseGuards(GqlAuthGuard)
 export class LessonsResolver {
     constructor(private readonly lessonsService: LessonsService) {}
 
-    @Query(() => Lesson)
+    @Query(() => StartLessonResponse)
     async startLesson(
-        @Args('input') input: StartLessonDto,
+        @Args('input') input: LessonDto,
         @CurrentUser() user: User,
-    ): Promise<Lesson> {
-        return await this.lessonsService.startLesson(
-            input.lessonUuid,
-            user.uuid,
-        );
+    ): Promise<StartLessonResponse> {
+        return await this.lessonsService.startLesson(input, user.uuid);
     }
 
     @ResolveField(() => EProgressStatus)
@@ -47,8 +44,8 @@ export class LessonsResolver {
     @Mutation(() => CompleteLessonResponse)
     async completeLesson(
         @CurrentUser() user: User,
-        @Args('input') input: CompleteLessonDto,
+        @Args('input') input: LessonDto,
     ): Promise<CompleteLessonResponse | boolean> {
-        return this.lessonsService.completeLesson(input.lessonUuid, user.uuid);
+        return this.lessonsService.completeLesson(input, user.uuid);
     }
 }

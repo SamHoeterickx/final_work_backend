@@ -7,6 +7,7 @@ import {
     OneToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
+import GraphQLJSON from 'graphql-type-json';
 
 @ObjectType()
 @Entity('chapters')
@@ -15,17 +16,17 @@ export class Chapter {
     @PrimaryGeneratedColumn('uuid')
     uuid: string;
 
-    @Field()
-    @Column()
-    name: string;
+    @Field(() => GraphQLJSON)
+    @Column({ type: 'jsonb' })
+    name: any;
 
     @Field()
     @Column()
     slug: string;
 
-    @Field()
-    @Column()
-    description: string;
+    @Field(() => GraphQLJSON)
+    @Column({ type: 'jsonb' })
+    description: any;
 
     @Field(() => [Lesson], { nullable: true })
     @OneToMany(() => Lesson, (lesson) => lesson.chapter)

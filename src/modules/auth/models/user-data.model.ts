@@ -1,5 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { EUserLevels, UserRoleType } from '../../../shared/types/types';
+import { UserRoleType } from '../../../shared/types/types';
+import { UserStreaks } from '../entity/user_streak.entity';
 
 @ObjectType()
 export class UserData {
@@ -11,4 +12,10 @@ export class UserData {
 
     @Field()
     role: UserRoleType;
+
+    @Field()
+    xp: number;
+
+    @Field()
+    streaks: UserStreaks;
 }

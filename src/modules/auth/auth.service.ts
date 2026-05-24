@@ -11,7 +11,11 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IUserTokens, IOnboardingData, ELocales } from '../../shared/types/types';
+import {
+    IUserTokens,
+    IOnboardingData,
+    ELocales,
+} from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
@@ -26,6 +30,7 @@ import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
 import { UpdateLanguageDto } from './dto/updateLanguage.dto';
+import { XpService } from '../xp/xp.service';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +43,7 @@ export class AuthService {
         private configService: ConfigService,
         private resendService: ResendService,
         private tokenService: TokenService,
+        private xpService: XpService,
     ) {
         const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)
@@ -53,17 +59,26 @@ export class AuthService {
             const eUser = await this.authRepository.findOne({
                 where: { uuid },
                 select: {
+                    uuid: true,
                     name: true,
                     email: true,
+                    xp: true,
                     role: true,
                 },
+                relations: ['streak'],
             });
 
             if (!eUser) {
                 throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 
-            return eUser;
+            return {
+                name: eUser.name,
+                email: eUser.email,
+                role: eUser.role,
+                xp: eUser.xp,
+                streaks: eUser.streak,
+            };
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -145,6 +160,11 @@ export class AuthService {
                         user: savedUser,
                     });
                     await manager.save(newProfile);
+
+                    await this.xpService.createUserStreaksEntry(
+                        savedUser,
+                        manager,
+                    );
 
                     const accessToken = this.tokenService.generateAccessToken(
                         savedUser.uuid,
@@ -583,14 +603,16 @@ export class AuthService {
         }
     }
 
-    public async updatePrefenceLanguage(userUuid: string, locale: UpdateLanguageDto): Promise<boolean> {
-        try{
-
+    public async updatePrefenceLanguage(
+        userUuid: string,
+        locale: UpdateLanguageDto,
+    ): Promise<boolean> {
+        try {
             await this.authRepository.update(userUuid, {
-                language: locale.language
+                language: locale.language,
             });
 
-            return true
+            return true;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -602,15 +624,14 @@ export class AuthService {
         }
     }
 
-    public async getPreferenceLanguage(userUuid: string,): Promise <ELocales> {
-        try{
-
+    public async getPreferenceLanguage(userUuid: string): Promise<ELocales> {
+        try {
             const eUser = await this.authRepository.findOne({
                 where: { uuid: userUuid },
-                select: { language: true }
-            })
-            
-            if(!eUser){
+                select: { language: true },
+            });
+
+            if (!eUser) {
                 throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 
