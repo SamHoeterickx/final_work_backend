@@ -5,6 +5,7 @@ import { User } from '../auth/entity/user.entity';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../../shared/guards/gqlAuth.guard';
 import { ChapterUser } from './entity/chapter_user.entity';
+import { Chapter } from './entity/chapter.entity';
 
 @Resolver()
 @UseGuards(GqlAuthGuard)
@@ -22,10 +23,10 @@ export class ChaptersResolver {
         return await this.chaptersService.unlockNewChapter(user.uuid);
     }
 
-    @Mutation(() => Boolean)
+    @Mutation(() => Chapter)
     public async generateCustomRoadmap(
         @CurrentUser() user: User,
-    ): Promise<boolean> {
+    ): Promise<Chapter> {
         return await this.chaptersService.generateCustomRoadmap(user.uuid);
     }
 }

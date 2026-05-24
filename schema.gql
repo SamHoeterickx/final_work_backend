@@ -108,7 +108,7 @@ type Mutation {
   completeLesson(input: LessonDto!): CompleteLessonResponse!
   deleteUser(input: DeleteUserDto!): Boolean!
   forgotPasswordRequest(input: ForgotPasswordRequestDto!): String!
-  generateCustomRoadmap: Boolean!
+  generateCustomRoadmap: Chapter!
   logOut: Boolean!
   loginUser(input: LoginUserDto!): UserTokens!
   refreshTokens(input: RefreshTokenDto!): UserTokens!
