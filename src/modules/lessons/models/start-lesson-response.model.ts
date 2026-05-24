@@ -1,5 +1,5 @@
-import { Field, ID, Int, ObjectType } from "@nestjs/graphql";
-import { LessonTranslation } from "../entity/lesson_translation.entity";
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { LessonTranslation } from '../entity/lesson_translation.entity';
 
 @ObjectType()
 export class StartLessonResponse {

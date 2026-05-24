@@ -34,7 +34,11 @@ export class ChaptersService {
         try {
             const uChapterProgress = await this.chapterProgressRepository.find({
                 where: { user: { uuid } },
-                relations: ['chapter', 'chapter.lessons', 'chapter.lessons.translations'],
+                relations: [
+                    'chapter',
+                    'chapter.lessons',
+                    'chapter.lessons.translations',
+                ],
                 order: {
                     order: 'ASC',
                     chapter: {
@@ -74,18 +78,24 @@ export class ChaptersService {
         try {
             const userProfile = await this.authService.findUserProfile(uuid);
 
-            if(!userProfile){
-                throw new HttpException('No userprofile found', HttpStatus.NOT_FOUND);
+            if (!userProfile) {
+                throw new HttpException(
+                    'No userprofile found',
+                    HttpStatus.NOT_FOUND,
+                );
             }
 
             const roadmapCount = await this.chapterProgressRepository.count({
                 where: {
-                    user: { uuid: userProfile.uuid}
-                }
-            })
+                    user: { uuid: userProfile.uuid },
+                },
+            });
 
-            if(roadmapCount > 0){
-                throw new HttpException('User already has a roadmap', HttpStatus.CONFLICT)
+            if (roadmapCount > 0) {
+                throw new HttpException(
+                    'User already has a roadmap',
+                    HttpStatus.CONFLICT,
+                );
             }
 
             const allChapters = await this.chapterRepository.find({

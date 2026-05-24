@@ -11,7 +11,11 @@ import { Repository } from 'typeorm';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { hash, compare } from 'bcryptjs';
 import { ConfigService } from '@nestjs/config';
-import { IUserTokens, IOnboardingData, ELocales } from '../../shared/types/types';
+import {
+    IUserTokens,
+    IOnboardingData,
+    ELocales,
+} from '../../shared/types/types';
 import { TokenService } from '../../shared/token/token.service';
 import { RefreshTokenDto } from './dto/refreshToken.dto';
 import { UserProfile } from './entity/user_profile.entity';
@@ -61,7 +65,7 @@ export class AuthService {
                     xp: true,
                     role: true,
                 },
-                relations: ['streak']
+                relations: ['streak'],
             });
 
             if (!eUser) {
@@ -157,7 +161,10 @@ export class AuthService {
                     });
                     await manager.save(newProfile);
 
-                    await this.xpService.createUserStreaksEntry(savedUser, manager);
+                    await this.xpService.createUserStreaksEntry(
+                        savedUser,
+                        manager,
+                    );
 
                     const accessToken = this.tokenService.generateAccessToken(
                         savedUser.uuid,
@@ -596,14 +603,16 @@ export class AuthService {
         }
     }
 
-    public async updatePrefenceLanguage(userUuid: string, locale: UpdateLanguageDto): Promise<boolean> {
-        try{
-
+    public async updatePrefenceLanguage(
+        userUuid: string,
+        locale: UpdateLanguageDto,
+    ): Promise<boolean> {
+        try {
             await this.authRepository.update(userUuid, {
-                language: locale.language
+                language: locale.language,
             });
 
-            return true
+            return true;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -615,15 +624,14 @@ export class AuthService {
         }
     }
 
-    public async getPreferenceLanguage(userUuid: string,): Promise <ELocales> {
-        try{
-
+    public async getPreferenceLanguage(userUuid: string): Promise<ELocales> {
+        try {
             const eUser = await this.authRepository.findOne({
                 where: { uuid: userUuid },
-                select: { language: true }
-            })
-            
-            if(!eUser){
+                select: { language: true },
+            });
+
+            if (!eUser) {
                 throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 

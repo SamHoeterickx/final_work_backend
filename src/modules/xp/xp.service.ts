@@ -97,21 +97,26 @@ export class XpService {
         }
     }
 
-    public async createUserStreaksEntry(user: User, manager?: EntityManager): Promise<boolean> {
-        try{
+    public async createUserStreaksEntry(
+        user: User,
+        manager?: EntityManager,
+    ): Promise<boolean> {
+        try {
             const entry = this.streakRepository.create({
                 user: user,
                 currentStreak: 0,
                 longestStreak: 0,
-                lastCompletedDate: null
+                lastCompletedDate: null,
             });
 
-            const streak = manager 
-                ? await manager.save(entry) 
+            const streak = manager
+                ? await manager.save(entry)
                 : await this.streakRepository.save(entry);
 
-            if(!streak){
-                throw new InternalServerErrorException('Failed to create user streaks entry');
+            if (!streak) {
+                throw new InternalServerErrorException(
+                    'Failed to create user streaks entry',
+                );
             }
 
             return true;
@@ -157,7 +162,7 @@ export class XpService {
             if (diffDays === 1) {
                 streak.currentStreak += 1;
                 streak.lastCompletedDate = today;
-                isStreaksUpdated = true
+                isStreaksUpdated = true;
             } else if (diffDays > 1) {
                 streak.currentStreak = 1;
                 streak.lastCompletedDate = today;
@@ -178,7 +183,7 @@ export class XpService {
             prevStreak,
             newStreak,
             streak: uStreak,
-            isStreaksUpdated
+            isStreaksUpdated,
         };
     }
 }

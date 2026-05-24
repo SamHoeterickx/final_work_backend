@@ -45,7 +45,7 @@ export interface ILessonTranslations {
     name: string;
     description: string;
     languageCode: ELocales;
-    content: any[]
+    content: any[];
 }
 
 export enum EProgressStatus {
@@ -79,15 +79,14 @@ registerEnumType(EUserLevels, {
     name: 'EUserLevels',
 });
 
-
 export enum ELocales {
     NL = 'nl',
     FR = 'fr',
-    EN = 'en'
-};
-registerEnumType( ELocales, {
-    name: 'ELocales'
-})
+    EN = 'en',
+}
+registerEnumType(ELocales, {
+    name: 'ELocales',
+});
 
 export enum ELessonScreenOptions {
     C_TITLE,
@@ -96,8 +95,8 @@ export enum ELessonScreenOptions {
     C_ONLY_TEXT,
     Q_RIGHT_OR_WRONG,
     Q_MATCH,
-    Q_CLICK_AND_FOCUS
+    Q_CLICK_AND_FOCUS,
 }
-registerEnumType( ELessonScreenOptions, {
-    name: 'ELessonScreenOptions'
-})
+registerEnumType(ELessonScreenOptions, {
+    name: 'ELessonScreenOptions',
+});

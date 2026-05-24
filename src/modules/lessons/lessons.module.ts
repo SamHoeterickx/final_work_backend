@@ -12,7 +12,12 @@ import { LessonTranslation } from './entity/lesson_translation.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Lesson, LessonUser, ChapterUser, LessonTranslation]),
+        TypeOrmModule.forFeature([
+            Lesson,
+            LessonUser,
+            ChapterUser,
+            LessonTranslation,
+        ]),
         AuthModule,
         XpModule,
     ],

@@ -19,11 +19,10 @@ export class Lesson {
     uuid: string;
 
     @Field(() => [LessonTranslation])
-    @OneToMany(
-        () => LessonTranslation,
-        (translation) => translation.lesson,
-        { cascade: true, eager: true }
-    )
+    @OneToMany(() => LessonTranslation, (translation) => translation.lesson, {
+        cascade: true,
+        eager: true,
+    })
     translations: LessonTranslation[];
 
     @Field()

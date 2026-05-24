@@ -1,6 +1,6 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { IsEnum, IsNotEmpty } from "class-validator";
-import { ELocales } from "../../../shared/types/types";
+import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { ELocales } from '../../../shared/types/types';
 
 @InputType()
 export class UpdateLanguageDto {
@@ -8,4 +8,4 @@ export class UpdateLanguageDto {
     @IsNotEmpty()
     @Field()
     language: ELocales;
-}   
+}

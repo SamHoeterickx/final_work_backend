@@ -36,7 +36,9 @@ export class AuthResolver {
 
     @Query(() => ELocales)
     @UseGuards(GqlAuthGuard)
-    public async getPreferenceLanguage(@CurrentUser() user: User): Promise<ELocales> {
+    public async getPreferenceLanguage(
+        @CurrentUser() user: User,
+    ): Promise<ELocales> {
         return await this.authService.getPreferenceLanguage(user.uuid);
     }
 
@@ -129,8 +131,8 @@ export class AuthResolver {
     public async updatePreferenceLanguage(
         @CurrentUser() user: User,
         @Args('input') input: UpdateLanguageDto,
-    ): Promise<boolean>{
-        console.log(input)
+    ): Promise<boolean> {
+        console.log(input);
         return await this.authService.updatePrefenceLanguage(user.uuid, input);
     }
 }

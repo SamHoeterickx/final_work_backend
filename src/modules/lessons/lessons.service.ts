@@ -66,8 +66,11 @@ export class LessonsService {
                     estimatedDuration: lessonUser.lesson.estimatedDuration,
                     xp: lessonUser.lesson.xp,
                     order: lessonUser.lesson.order,
-                    content: lessonUser.lesson.translations.filter((translation: LessonTranslation) => translation.languageCode === languageCode)
-                }
+                    content: lessonUser.lesson.translations.filter(
+                        (translation: LessonTranslation) =>
+                            translation.languageCode === languageCode,
+                    ),
+                };
             }
 
             await this.lessonUserRepository.update(lessonUser.uuid, {
@@ -81,9 +84,11 @@ export class LessonsService {
                 estimatedDuration: lessonUser.lesson.estimatedDuration,
                 xp: lessonUser.lesson.xp,
                 order: lessonUser.lesson.order,
-                content: lessonUser.lesson.translations.filter((translation: LessonTranslation) => translation.languageCode === languageCode)
-            }
-
+                content: lessonUser.lesson.translations.filter(
+                    (translation: LessonTranslation) =>
+                        translation.languageCode === languageCode,
+                ),
+            };
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
@@ -121,7 +126,7 @@ export class LessonsService {
     ): Promise<CompleteLessonResponse | boolean> {
         try {
             const { lessonUuid, languageCode } = input;
-            
+
             const lesson = await this.lessonRepository.findOne({
                 where: { uuid: lessonUuid },
                 order: {
@@ -214,10 +219,11 @@ export class LessonsService {
                 });
                 newUnlockedLesson = nextLessonUser.lesson;
                 if (newUnlockedLesson.translations) {
-                    newUnlockedLesson.translations = newUnlockedLesson.translations.filter(
-                        (translation: LessonTranslation) =>
-                            translation.languageCode === languageCode,
-                    );
+                    newUnlockedLesson.translations =
+                        newUnlockedLesson.translations.filter(
+                            (translation: LessonTranslation) =>
+                                translation.languageCode === languageCode,
+                        );
                 }
             }
 

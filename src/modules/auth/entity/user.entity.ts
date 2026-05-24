@@ -57,7 +57,7 @@ export class User {
     @Column({
         type: 'enum',
         enum: ELocales,
-        default: ELocales.EN
+        default: ELocales.EN,
     })
     language: ELocales;
 

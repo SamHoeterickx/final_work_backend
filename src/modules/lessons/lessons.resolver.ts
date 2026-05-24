@@ -27,10 +27,7 @@ export class LessonsResolver {
         @Args('input') input: LessonDto,
         @CurrentUser() user: User,
     ): Promise<StartLessonResponse> {
-        return await this.lessonsService.startLesson(
-            input,
-            user.uuid,
-        );
+        return await this.lessonsService.startLesson(input, user.uuid);
     }
 
     @ResolveField(() => EProgressStatus)
