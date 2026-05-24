@@ -42,8 +42,10 @@ export class CreateUserDto {
     })
     repeatPassword: string;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @Field(() => OnboardingInput)
     @ValidateNested()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     @Type(() => OnboardingInput)
     onboarding: OnboardingInput;
 }
