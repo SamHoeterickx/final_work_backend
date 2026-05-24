@@ -26,6 +26,7 @@ import { UpdateEmailDto } from './dto/updateEmail.dto';
 import { UpdateUsernameDto } from './dto/updateUsername.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
 import { UpdateLanguageDto } from './dto/updateLanguage.dto';
+import { XpService } from '../xp/xp.service';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,7 @@ export class AuthService {
         private configService: ConfigService,
         private resendService: ResendService,
         private tokenService: TokenService,
+        private xpService: XpService,
     ) {
         const SALT = this.configService.get<string>('PEPPER');
         if (!SALT)
@@ -154,6 +156,8 @@ export class AuthService {
                         user: savedUser,
                     });
                     await manager.save(newProfile);
+
+                    await this.xpService.createUserStreaksEntry(savedUser, manager);
 
                     const accessToken = this.tokenService.generateAccessToken(
                         savedUser.uuid,

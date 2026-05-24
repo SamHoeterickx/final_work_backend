@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../auth/entity/user.entity';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { UserStreaks } from '../auth/entity/user_streak.entity';
 import { IHandleStreakUpdate, IUpdateXP } from '../../shared/types/types';
 
@@ -86,6 +86,35 @@ export class XpService {
                 newUserXP,
                 ...updatedStreak,
             };
+        } catch (error: unknown) {
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed update xp: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
+
+    public async createUserStreaksEntry(user: User, manager?: EntityManager): Promise<boolean> {
+        try{
+            const entry = this.streakRepository.create({
+                user: user,
+                currentStreak: 0,
+                longestStreak: 0,
+                lastCompletedDate: null
+            });
+
+            const streak = manager 
+                ? await manager.save(entry) 
+                : await this.streakRepository.save(entry);
+
+            if(!streak){
+                throw new InternalServerErrorException('Failed to create user streaks entry');
+            }
+
+            return true;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {

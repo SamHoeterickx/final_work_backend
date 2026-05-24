@@ -80,7 +80,7 @@ export class ChaptersService {
 
             const roadmapCount = await this.chapterProgressRepository.count({
                 where: {
-                    user: { uuid: userProfile?.uuid}
+                    user: { uuid: userProfile.uuid}
                 }
             })
 
