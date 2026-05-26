@@ -438,7 +438,7 @@ export class AuthService {
             });
 
             if (!eUser) {
-                throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+                throw new HttpException('No user found with this email', HttpStatus.NOT_FOUND);
             }
 
             const gPasswordResetCode = this.generateRequestPasswordCode();
@@ -519,6 +519,17 @@ export class AuthService {
     ): Promise<boolean> {
         try {
             const { updatedEmailAdress } = input;
+
+            const eUserWithEmail = await this.authRepository.findOne({
+                where: {
+                    email: updatedEmailAdress
+                }
+            });
+
+            if(eUserWithEmail){
+                throw new HttpException('Email is already in use', HttpStatus.CONFLICT)
+            }
+
             const uUser = await this.authRepository.update(user.uuid, {
                 email: updatedEmailAdress,
             });
