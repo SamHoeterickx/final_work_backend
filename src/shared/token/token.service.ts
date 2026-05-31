@@ -40,7 +40,7 @@ export class TokenService {
     }
 
     /**
-     * Generate new refresh token that expires in 7 days
+     * Generate new refresh token that expires in 30 days
      *
      * @param userId - string
      *
@@ -49,7 +49,7 @@ export class TokenService {
     public generateRefreshToken(userId: string): string {
         return sign({ sub: userId }, this.JWT_REFRESH_SECRET, {
             algorithm: 'HS256',
-            expiresIn: '7d',
+            expiresIn: '30d',
         });
     }
 
