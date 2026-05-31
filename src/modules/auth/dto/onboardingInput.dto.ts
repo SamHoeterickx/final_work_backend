@@ -15,6 +15,7 @@ export class OnboardingInput {
 
     @Field(() => String)
     @IsString()
+    @IsNotEmpty()
     goal: string;
 
     @Field(() => String)

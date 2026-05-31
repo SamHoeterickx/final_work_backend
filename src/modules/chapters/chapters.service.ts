@@ -71,8 +71,8 @@ export class ChaptersService {
 
     /**
      * Generate custom roadmap for user based on the user profile
-     * * @param uuid - user uuid
-     * @returns a Promise containing a boolean
+     * @param uuid - user uuid
+     * @returns a Promise containing a Chapter
      */
     public async generateCustomRoadmap(uuid: string): Promise<Chapter> {
         try {
@@ -215,104 +215,57 @@ export class ChaptersService {
     /**
      * Bepaalt de volgorde en filtert hoofdstukken op basis van het profiel
      */
-    private determineRoadmapOrder(
-        chapters: Chapter[],
-        userProfile: UserProfile | null | undefined,
-    ): Chapter[] {
-        let availableChapters = [...chapters];
-
-        // ---------------------------------------------------------
-        // REGEL 1: FILTER OP ERVARING (experienceLevel)
-        // ---------------------------------------------------------
-        const exp = userProfile?.experienceLevel?.toLowerCase();
-
-        if (exp === 'taste_enjoyer' || exp === 'curious') {
-            availableChapters = availableChapters.filter(
-                (chapter) => !chapter.tags.includes('ADVANCED'),
-            );
+    private determineRoadmapOrder(chapters: Chapter[], userProfile: any): Chapter[] {
+        const userTags = new Set<string>();
+        
+        if (userProfile.currentBehaviour) {
+            userProfile.currentBehaviour.forEach((tag: string) => userTags.add(tag));
+        }
+        if (userProfile.experienceLevel) {
+            userTags.add(userProfile.experienceLevel);
+        }
+        if (userProfile.goal) {
+            userTags.add(userProfile.goal);
+        }
+        if (userProfile.currentPreferences) {
+            userTags.add(userProfile.currentPreferences);
+        }
+        if (userProfile.currentMethodes) {
+            userProfile.currentMethodes.forEach((tag: string) => userTags.add(tag));
+        }
+        if (userProfile.extraGear) {
+            userProfile.extraGear.forEach((tag: string) => userTags.add(tag));
         }
 
-        // ---------------------------------------------------------
-        // REGEL 2: PRIORITEIT OP BASIS VAN DOEL (goal)
-        // ---------------------------------------------------------
-        const preferredTagOrder: string[] = ['BASICS'];
-        const goal = userProfile?.goal?.toLowerCase();
+        console.log('userTags', userTags);
 
-        switch (goal) {
-            case 'bean_to_cup':
-                // Wil alles weten over de hele keten
-                preferredTagOrder.push(
-                    'BIOLOGY',
-                    'ORIGINS',
-                    'ROASTING',
-                    'BREWING',
-                    'CHEMISTRY',
-                    'HISTORY',
-                    'ETHICS',
-                );
-                break;
-            case 'perfect_espresso':
-                // Focus op hardware en de wetenschap van extractie
-                preferredTagOrder.push(
-                    'EQUIPMENT',
-                    'BREWING',
-                    'CHEMISTRY',
-                    'ROASTING',
-                );
-                break;
-            case 'tasting_skills':
-                // Focus op smaken, herkomst en het brandproces
-                preferredTagOrder.push(
-                    'ORIGINS',
-                    'ROASTING',
-                    'BIOLOGY',
-                    'BREWING',
-                );
-                break;
-            case 'latte_art':
-                // Vooral praktisch: melk opschuimen, schenken en apparatuur
-                preferredTagOrder.push('EQUIPMENT', 'BREWING');
-                break;
-            default:
-                preferredTagOrder.push(
-                    'BIOLOGY',
-                    'BREWING',
-                    'ORIGINS',
-                    'HISTORY',
-                );
-        }
+        return chapters
+            .map((chapter) => {
+                let score = 0;
+                
+                const chapterTags: string[] = typeof chapter.tags === 'string' 
+                    ? JSON.parse(chapter.tags) 
+                    : chapter.tags || [];
 
-        // ---------------------------------------------------------
-        // REGEL 3: TWEAKEN OP BASIS VAN SMAAK (currentPreferences)
-        // ---------------------------------------------------------
-        const pref = userProfile?.currentPreference?.toLowerCase();
+                chapterTags.forEach((tag) => {
+                    if (userTags.has(tag)) {
+                        score += 1;
+                        
+                        if (tag.startsWith('goal_')) {
+                            score += 1.5; 
+                        }
+                    }
+                });
 
-        if (pref === 'fruity_acidic') {
-            preferredTagOrder.unshift('ORIGINS');
-        } else if (pref === 'bold_classic') {
-            preferredTagOrder.unshift('ROASTING');
-        }
-
-        // ---------------------------------------------------------
-        // SORTEREN VAN DE LIJST
-        // ---------------------------------------------------------
-        availableChapters.sort((a, b) => {
-            const indexA = this.getHighestPriorityIndex(
-                a.tags,
-                preferredTagOrder,
-            );
-            const indexB = this.getHighestPriorityIndex(
-                b.tags,
-                preferredTagOrder,
-            );
-
-            if (indexA === indexB) {
-                return a.created_at.getTime() - b.created_at.getTime();
-            }
-            return indexA - indexB;
-        });
-
-        return availableChapters;
+                return { chapter, score };
+            })
+            .sort((a, b) => {
+                if (b.score !== a.score) {
+                    return b.score - a.score;
+                }
+                return 0; 
+            })
+            .map((item) => item.chapter);
     }
 
     private getHighestPriorityIndex(
