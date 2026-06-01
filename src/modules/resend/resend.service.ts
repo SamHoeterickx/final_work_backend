@@ -28,7 +28,7 @@ export class ResendService {
             const { reciever, message, subject } = emailOptions;
 
             await this.resend.emails.send({
-                from: 'onboarding@resend.dev',
+                from: 'BrewLingo <noreply@brewlingo.be>',
                 to: reciever,
                 subject: subject,
                 html: message,
