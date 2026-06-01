@@ -201,7 +201,10 @@ export class AuthService {
                         <div style="max-width: 550px; margin: 0 auto; line-height: 1.6;">
                             <h2 style="font-size: 32px; margin-top: 0; margin-bottom: 24px;">${content.title}</h2>
                             <p style="font-size: 24px; margin-bottom: 16px; font-weight: bold;">${content.greetings} ${result.savedUser.name},</p>
-                            <p style="font-size: 18px; margin-bottom: 0;">${content.description}</p>
+                            <p style="font-size: 18px; margin-bottom: 32px;">${content.description}</p>
+                            <hr style="border: none; border-top: 1px solid #cccccc; margin: 32px 0;" />
+                            <p style="font-size: 12px; color: #666666; margin-bottom: 8px;">${content.noReply}</p>
+                            <p style="font-size: 14px; margin-top: 0;"><a href="https://www.brewlingo.be" target="_blank" style="color: #465E3C; text-decoration: none; font-weight: bold;">www.brewlingo.be</a></p>
                         </div>
                     </div>
                 `,
@@ -505,7 +508,10 @@ export class AuthService {
                                 </span>
                             </div>
                             
-                            <p>${content.lowerInfo}</p>
+                            <p style="font-size: 14px">${content.lowerInfo}</p>
+                            <hr style="border: none; border-top: 1px solid #cccccc; margin: 32px 0;" />
+                            <p style="font-size: 12px; color: #666666; margin-bottom: 8px;">${content.noReply}</p>
+                            <p style="font-size: 14px; margin-top: 0;"><a href="https://www.brewlingo.be" target="_blank" style="color: #465E3C; text-decoration: none; font-weight: bold;">www.brewlingo.be</a></p>
                         </div>
                     </div>
                 `,
