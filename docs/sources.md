@@ -9,3 +9,4 @@
 - [Dockerize NestJs](https://dev.to/code42cate/how-to-dockerize-nestjs-327j)
 - [Resend mail service](https://resend.com/)
 - [GEMINI CHAT - Lesson entity with translations](https://gemini.google.com/share/89f1ecff0e19)
+- [Resend add DNS to domain](https://resend.com/docs/dashboard/domains/introduction)

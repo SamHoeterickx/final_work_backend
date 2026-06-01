@@ -31,6 +31,10 @@ import { UpdateUsernameDto } from './dto/updateUsername.dto';
 import { DeleteUserDto } from './dto/deleteUser.dto';
 import { UpdateLanguageDto } from './dto/updateLanguage.dto';
 import { XpService } from '../xp/xp.service';
+import {
+    REGISTRATION_TRANSLATIONS,
+    RESET_PASSWORD_TRANSLATIONS,
+} from '../../shared/const/mail.const';
 
 @Injectable()
 export class AuthService {
@@ -179,11 +183,33 @@ export class AuthService {
                         currentHashedRefreshToken: hRefreshToken,
                     });
 
-                    return { accessToken, refreshToken };
+                    return { accessToken, refreshToken, savedUser };
                 },
             );
 
-            return result;
+            const uLanguage = result.savedUser.language;
+            const content =
+                REGISTRATION_TRANSLATIONS[uLanguage] ||
+                RESET_PASSWORD_TRANSLATIONS.en;
+
+            await this.resendService.sendEmail({
+                reciever: result.savedUser.email,
+                subject: content.title,
+                message: `
+                    <div style="background-color: #E8DFD3; padding: 64px 20px; font-family: Arial, sans-serif; color: #222222; text-align: center; box-sizing: border-box;">
+                        <div style="max-width: 550px; margin: 0 auto; line-height: 1.6;">
+                            <h2 style="font-size: 32px; margin-top: 0; margin-bottom: 24px;">${content.title}</h2>
+                            <p style="font-size: 24px; margin-bottom: 16px; font-weight: bold;">${content.greetings} ${result.savedUser.name},</p>
+                            <p style="font-size: 18px; margin-bottom: 0;">${content.description}</p>
+                        </div>
+                    </div>
+                `,
+            });
+
+            return {
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
+            };
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
@@ -438,7 +464,10 @@ export class AuthService {
             });
 
             if (!eUser) {
-                throw new HttpException('No user found with this email', HttpStatus.NOT_FOUND);
+                throw new HttpException(
+                    'No user found with this email',
+                    HttpStatus.NOT_FOUND,
+                );
             }
 
             const gPasswordResetCode = this.generateRequestPasswordCode();
@@ -452,15 +481,32 @@ export class AuthService {
             });
             console.log(gPasswordResetCode);
 
+            const uLanguage = eUser.language;
+            console.log(uLanguage);
+
+            const content =
+                RESET_PASSWORD_TRANSLATIONS[uLanguage] ||
+                RESET_PASSWORD_TRANSLATIONS.en;
+
             await this.resendService.sendEmail({
                 reciever: eUser.email,
-                subject: 'Request forgot password',
+                subject: content.title,
                 message: `
-                    <h2>Password Reset Request</h2>
-                    <p>Hi ${eUser.name},</p>
-                    <p>We received a request to reset your password. Please enter the following code in the app to set a new password:</p>
-                    <h3 style="background: #f4f4f4; padding: 10px; display: inline-block; letter-spacing: 2px;">${gPasswordResetCode}</h3>
-                    <p>If you didn't request this, you can safely ignore this email.</p>
+                    <div style="background-color: #E8DFD3; padding: 64px 20px; font-family: Arial, sans-serif; color: #222222; text-align: center; box-sizing: border-box;">
+                        <div style="max-width: 550px; margin: 0 auto; line-height: 1.5;">
+                            <h2 style="font-size: 24px">${content.title}</h2>
+                            <p style="font-size: 14px">${content.greetings} ${eUser.name},</p>
+                            <p style="font-size: 14px">${content.description}</p>
+                            
+                            <div style="margin: 32px 0;">
+                                <span style="background-color: #465E3C; padding: 24px 48px; display: inline-block; letter-spacing: 12px; font-size: 24px; border-radius: 9999px; color: #ffffff; font-weight: bold;">
+                                    ${gPasswordResetCode}
+                                </span>
+                            </div>
+                            
+                            <p>${content.lowerInfo}</p>
+                        </div>
+                    </div>
                 `,
             });
 
@@ -522,12 +568,15 @@ export class AuthService {
 
             const eUserWithEmail = await this.authRepository.findOne({
                 where: {
-                    email: updatedEmailAdress
-                }
+                    email: updatedEmailAdress,
+                },
             });
 
-            if(eUserWithEmail){
-                throw new HttpException('Email is already in use', HttpStatus.CONFLICT)
+            if (eUserWithEmail) {
+                throw new HttpException(
+                    'Email is already in use',
+                    HttpStatus.CONFLICT,
+                );
             }
 
             const uUser = await this.authRepository.update(user.uuid, {

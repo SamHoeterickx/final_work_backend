@@ -215,11 +215,16 @@ export class ChaptersService {
     /**
      * Bepaalt de volgorde en filtert hoofdstukken op basis van het profiel
      */
-    private determineRoadmapOrder(chapters: Chapter[], userProfile: any): Chapter[] {
+    private determineRoadmapOrder(
+        chapters: Chapter[],
+        userProfile: UserProfile,
+    ): Chapter[] {
         const userTags = new Set<string>();
-        
+
         if (userProfile.currentBehaviour) {
-            userProfile.currentBehaviour.forEach((tag: string) => userTags.add(tag));
+            userProfile.currentBehaviour.forEach((tag: string) =>
+                userTags.add(tag),
+            );
         }
         if (userProfile.experienceLevel) {
             userTags.add(userProfile.experienceLevel);
@@ -227,11 +232,13 @@ export class ChaptersService {
         if (userProfile.goal) {
             userTags.add(userProfile.goal);
         }
-        if (userProfile.currentPreferences) {
-            userTags.add(userProfile.currentPreferences);
+        if (userProfile.currentPreference) {
+            userTags.add(userProfile.currentPreference);
         }
         if (userProfile.currentMethodes) {
-            userProfile.currentMethodes.forEach((tag: string) => userTags.add(tag));
+            userProfile.currentMethodes.forEach((tag: string) =>
+                userTags.add(tag),
+            );
         }
         if (userProfile.extraGear) {
             userProfile.extraGear.forEach((tag: string) => userTags.add(tag));
@@ -242,17 +249,18 @@ export class ChaptersService {
         return chapters
             .map((chapter) => {
                 let score = 0;
-                
-                const chapterTags: string[] = typeof chapter.tags === 'string' 
-                    ? JSON.parse(chapter.tags) 
-                    : chapter.tags || [];
+
+                const chapterTags: string[] =
+                    typeof chapter.tags === 'string'
+                        ? (JSON.parse(chapter.tags) as string[])
+                        : chapter.tags || [];
 
                 chapterTags.forEach((tag) => {
                     if (userTags.has(tag)) {
                         score += 1;
-                        
+
                         if (tag.startsWith('goal_')) {
-                            score += 1.5; 
+                            score += 1.5;
                         }
                     }
                 });
@@ -263,7 +271,7 @@ export class ChaptersService {
                 if (b.score !== a.score) {
                     return b.score - a.score;
                 }
-                return 0; 
+                return 0;
             })
             .map((item) => item.chapter);
     }
