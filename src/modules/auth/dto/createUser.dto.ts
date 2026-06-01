@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import {
     IsEmail,
+    IsEnum,
     IsNotEmpty,
     IsString,
     Matches,
@@ -9,6 +10,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { OnboardingInput } from './onboardingInput.dto';
+import { ELocales } from '../../../shared/types/types';
 
 @InputType()
 export class CreateUserDto {
@@ -32,6 +34,11 @@ export class CreateUserDto {
         message: 'password too weak',
     })
     password: string;
+
+    @Field()
+    @IsEnum(ELocales)
+    @IsNotEmpty()
+    language: ELocales;
 
     @Field()
     @IsString()

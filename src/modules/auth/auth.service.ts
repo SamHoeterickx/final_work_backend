@@ -123,7 +123,7 @@ export class AuthService {
     }
 
     public async createNewUser(body: CreateUserDto): Promise<IUserTokens> {
-        const { name, email, password, repeatPassword } = body;
+        const { name, email, password, repeatPassword, language } = body;
         const onboarding = body.onboarding as unknown as IOnboardingData;
 
         try {
@@ -149,6 +149,7 @@ export class AuthService {
                         name,
                         email,
                         password: hPassword,
+                        language
                     });
                     const savedUser = await manager.save(newUser);
 

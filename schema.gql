@@ -38,6 +38,7 @@ type CompleteLessonResponse {
 
 input CreateUserDto {
   email: String!
+  language: String!
   name: String!
   onboarding: OnboardingInput!
   password: String!
