@@ -76,12 +76,18 @@ export class AuthService {
                 throw new HttpException('No user found', HttpStatus.NOT_FOUND);
             }
 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const uStreak = eUser.streak;
+            uStreak.currentStreak = await this.xpService.checkValidStreaks(eUser.uuid, eUser.streak.lastCompletedDate, eUser.streak.currentStreak);
+
             return {
                 name: eUser.name,
                 email: eUser.email,
                 role: eUser.role,
                 xp: eUser.xp,
-                streaks: eUser.streak,
+                streaks: uStreak,
             };
         } catch (error: unknown) {
             console.error(error);

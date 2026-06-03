@@ -186,4 +186,38 @@ export class XpService {
             isStreaksUpdated,
         };
     }
+
+    public async checkValidStreaks(uuid: string, lastCompletedDate: Date | null, currentStreak: number): Promise<number> {
+        try{
+
+            if(!lastCompletedDate) return currentStreak;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (currentStreak && lastCompletedDate) {
+                const lastDate = new Date(lastCompletedDate);
+                lastDate.setHours(0, 0, 0, 0);
+
+                const diffTime = today.getTime() - lastDate.getTime();
+                const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+                if (diffDays > 1) {
+                    currentStreak = 0;
+                    await this.streakRepository.update({ user: { uuid }}, { currentStreak });
+                }
+            }
+
+            return currentStreak
+
+        }catch(error: unknown){
+            console.error(error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException(
+                `Failed update xp: ${error instanceof Error ? error.message : String(error)}`,
+            );
+        }
+    }
 }
