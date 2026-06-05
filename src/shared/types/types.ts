@@ -93,10 +93,12 @@ export enum ELessonScreenOptions {
     C_DID_YOU_KNOW,
     C_TEXT_WITH_IMAGE,
     C_ONLY_TEXT,
+    C_VIDEO,
     Q_RIGHT_OR_WRONG,
     Q_MATCH,
     Q_CLICK_AND_FOCUS,
 }
+
 registerEnumType(ELessonScreenOptions, {
     name: 'ELessonScreenOptions',
 });
