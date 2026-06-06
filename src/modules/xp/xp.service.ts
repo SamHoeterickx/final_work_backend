@@ -187,14 +187,17 @@ export class XpService {
         };
     }
 
-    public async checkValidStreaks(uuid: string, lastCompletedDate: Date | null, currentStreak: number): Promise<number> {
-        try{
-
-            if(!lastCompletedDate) return currentStreak;
+    public async checkValidStreaks(
+        uuid: string,
+        lastCompletedDate: Date | null,
+        currentStreak: number,
+    ): Promise<number> {
+        try {
+            if (!lastCompletedDate) return currentStreak;
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             if (currentStreak && lastCompletedDate) {
                 const lastDate = new Date(lastCompletedDate);
                 lastDate.setHours(0, 0, 0, 0);
@@ -204,13 +207,15 @@ export class XpService {
 
                 if (diffDays > 1) {
                     currentStreak = 0;
-                    await this.streakRepository.update({ user: { uuid }}, { currentStreak });
+                    await this.streakRepository.update(
+                        { user: { uuid } },
+                        { currentStreak },
+                    );
                 }
             }
 
-            return currentStreak
-
-        }catch(error: unknown){
+            return currentStreak;
+        } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
                 throw error;

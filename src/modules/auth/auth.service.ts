@@ -34,6 +34,7 @@ import { XpService } from '../xp/xp.service';
 import {
     REGISTRATION_TRANSLATIONS,
     RESET_PASSWORD_TRANSLATIONS,
+    DELETE_ACCOUNT_TRANSLATIONS,
 } from '../../shared/const/mail.const';
 
 @Injectable()
@@ -78,9 +79,13 @@ export class AuthService {
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             const uStreak = eUser.streak;
-            uStreak.currentStreak = await this.xpService.checkValidStreaks(eUser.uuid, eUser.streak.lastCompletedDate, eUser.streak.currentStreak);
+            uStreak.currentStreak = await this.xpService.checkValidStreaks(
+                eUser.uuid,
+                eUser.streak.lastCompletedDate,
+                eUser.streak.currentStreak,
+            );
 
             return {
                 name: eUser.name,
@@ -155,7 +160,7 @@ export class AuthService {
                         name,
                         email,
                         password: hPassword,
-                        language
+                        language,
                     });
                     const savedUser = await manager.save(newUser);
 
@@ -661,6 +666,30 @@ export class AuthService {
             );
             if (isMatch) {
                 await this.authRepository.delete(uuid);
+
+                const uLanguage = dbUser.language;
+                const content =
+                    DELETE_ACCOUNT_TRANSLATIONS[uLanguage] ||
+                    DELETE_ACCOUNT_TRANSLATIONS.en;
+
+                await this.resendService.sendEmail({
+                    reciever: dbUser.email,
+                    subject: content.title,
+                    message: `
+                        <div style="background-color: #E8DFD3; padding: 64px 20px; font-family: Arial, sans-serif; color: #222222; text-align: center; box-sizing: border-box;">
+                            <div style="max-width: 550px; margin: 0 auto; line-height: 1.5;">
+                                <h2 style="font-size: 24px">${content.title}</h2>
+                                <p style="font-size: 14px">${content.greetings} ${dbUser.name},</p>
+                                <p style="font-size: 14px">${content.description}</p>
+                                
+                                <hr style="border: none; border-top: 1px solid #cccccc; margin: 32px 0;" />
+                                <p style="font-size: 12px; color: #666666; margin-bottom: 8px;">${content.noReply}</p>
+                                <p style="font-size: 14px; margin-top: 0;"><a href="https://www.brewlingo.be" target="_blank" style="color: #465E3C; text-decoration: none; font-weight: bold;">www.brewlingo.be</a></p>
+                            </div>
+                        </div>
+                    `,
+                });
+
                 return true;
             }
 
