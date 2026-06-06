@@ -41,7 +41,7 @@ import { XpModule } from './modules/xp/xp.module';
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
             context: ({ req }: { req: Request }) => ({ req }),
-            autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+            autoSchemaFile: true,
             sortSchema: true,
             // playground: process.env.NODE_ENV !== 'production',
             playground: true,
