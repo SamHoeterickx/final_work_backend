@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Chapter } from './entity/chapter.entity';
 import { Repository } from 'typeorm';
 import { ChapterUser } from './entity/chapter_user.entity';
-import { EProgressStatus } from '../../shared/types/types';
+import { EProgressStatus, ILessonTranslations } from '../../shared/types/types';
 import { LessonUser } from '../lessons/entity/lesson_user.entity';
 import { AuthService } from '../auth/auth.service';
 import { LessonsService } from '../lessons/lessons.service';
@@ -77,6 +77,7 @@ export class ChaptersService {
     public async generateCustomRoadmap(uuid: string): Promise<Chapter> {
         try {
             const userProfile = await this.authService.findUserProfile(uuid);
+            const userLanguage = await this.authService.getPreferenceLanguage(uuid);
 
             if (!userProfile) {
                 throw new HttpException(
@@ -100,7 +101,7 @@ export class ChaptersService {
 
             const allChapters = await this.chapterRepository.find({
                 order: { created_at: 'ASC' },
-                relations: ['lessons'],
+                relations: ['lessons', 'lessons.translations'],
             });
 
             if (!allChapters || allChapters.length === 0) {
@@ -140,18 +141,23 @@ export class ChaptersService {
                         LessonUser,
                     );
 
-                const lessonUserEntries = firstChapter.lessons.map((lesson) => {
-                    return lessonUserRepo.create({
-                        user: { uuid },
-                        lesson: { uuid: lesson.uuid },
-                        status:
-                            lesson.order === 1
-                                ? EProgressStatus.UNLOCKED
-                                : EProgressStatus.LOCKED,
-                    });
+                const firstLesson = firstChapter.lessons.find((l) => l.order === 1) || firstChapter.lessons[0];
+
+                if (firstLesson.translations) {
+                    firstLesson.translations = firstLesson.translations.filter(
+                        (translation: ILessonTranslations) => translation.languageCode === userLanguage,
+                    );
+                }
+
+                const lessonUserEntry = lessonUserRepo.create({
+                    user: { uuid },
+                    lesson: { uuid: firstLesson.uuid },
+                    status: EProgressStatus.UNLOCKED,
                 });
 
-                await lessonUserRepo.save(lessonUserEntries);
+                await lessonUserRepo.save(lessonUserEntry);
+
+                firstChapter.lessons = [firstLesson];
             }
 
             return firstChapter;
