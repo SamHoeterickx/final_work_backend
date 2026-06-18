@@ -21,7 +21,7 @@ export class EarlyAccessSignups {
     @Field()
     @Column({ type: 'enum', enum: EPlatform, default: EPlatform.ANDROID })
     platform: EPlatform;
-
+    
     @Field()
     @CreateDateColumn()
     date: Date;
