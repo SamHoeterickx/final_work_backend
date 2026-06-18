@@ -4,10 +4,7 @@ import { EarlySubscribeDto } from './dto/earlySubscribe.dto';
 
 @Resolver()
 export class EarlyAccessSignupsResolver {
-
-    constructor(
-        private earlyAccessSignupService: EarlyAccessSignupsService;
-    ){}
+    constructor(private earlyAccessSignupService: EarlyAccessSignupsService) {}
 
     @Query(() => Number)
     async getCount(): Promise<number> {
@@ -15,9 +12,7 @@ export class EarlyAccessSignupsResolver {
     }
 
     @Mutation()
-    async subscribe(
-        @Args('input') input: EarlySubscribeDto
-    ) {
-        return await this.earlyAccessSignupService.subscribe(input)
+    async subscribe(@Args('input') input: EarlySubscribeDto) {
+        return await this.earlyAccessSignupService.subscribe(input);
     }
 }

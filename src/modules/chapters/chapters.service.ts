@@ -77,7 +77,8 @@ export class ChaptersService {
     public async generateCustomRoadmap(uuid: string): Promise<Chapter> {
         try {
             const userProfile = await this.authService.findUserProfile(uuid);
-            const userLanguage = await this.authService.getPreferenceLanguage(uuid);
+            const userLanguage =
+                await this.authService.getPreferenceLanguage(uuid);
 
             if (!userProfile) {
                 throw new HttpException(
@@ -141,11 +142,14 @@ export class ChaptersService {
                         LessonUser,
                     );
 
-                const firstLesson = firstChapter.lessons.find((l) => l.order === 1) || firstChapter.lessons[0];
+                const firstLesson =
+                    firstChapter.lessons.find((l) => l.order === 1) ||
+                    firstChapter.lessons[0];
 
                 if (firstLesson.translations) {
                     firstLesson.translations = firstLesson.translations.filter(
-                        (translation: ILessonTranslations) => translation.languageCode === userLanguage,
+                        (translation: ILessonTranslations) =>
+                            translation.languageCode === userLanguage,
                     );
                 }
 

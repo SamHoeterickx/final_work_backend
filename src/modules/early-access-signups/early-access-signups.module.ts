@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EarlyAccessSignups } from './entity/EarlyAccessSignup.entity';
 
 @Module({
-    imports: [ TypeOrmModule.forFeature([EarlyAccessSignups])],
+    imports: [TypeOrmModule.forFeature([EarlyAccessSignups])],
     providers: [EarlyAccessSignupsResolver, EarlyAccessSignupsService],
 })
 export class EarlyAccessSignupsModule {}

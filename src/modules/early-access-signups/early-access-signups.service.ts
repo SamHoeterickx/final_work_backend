@@ -1,4 +1,8 @@
-import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EarlyAccessSignups } from './entity/EarlyAccessSignup.entity';
@@ -7,7 +11,8 @@ import { EarlySubscribeDto } from './dto/earlySubscribe.dto';
 @Injectable()
 export class EarlyAccessSignupsService {
     constructor(
-        @InjectRepository(EarlyAccessSignups) private earlyAccessSignupsRepository: Repository<EarlyAccessSignups>,
+        @InjectRepository(EarlyAccessSignups)
+        private earlyAccessSignupsRepository: Repository<EarlyAccessSignups>,
     ) {}
 
     async getCount(): Promise<number> {
@@ -28,12 +33,12 @@ export class EarlyAccessSignupsService {
         try {
             const nSubscriber = this.earlyAccessSignupsRepository.create({
                 email: input.email,
-                platform: input.platform
+                platform: input.platform,
             });
 
             await this.earlyAccessSignupsRepository.save(nSubscriber);
 
-            return true
+            return true;
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof HttpException) {
