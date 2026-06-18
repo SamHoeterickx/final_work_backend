@@ -41,6 +41,7 @@ import { EarlyAccessSignupsModule } from './modules/early-access-signups/early-a
         }),
         GraphQLModule.forRoot<ApolloDriverConfig>({
             driver: ApolloDriver,
+            path: '/graphql',
             context: ({ req }: { req: Request }) => ({ req }),
             autoSchemaFile: true,
             sortSchema: true,

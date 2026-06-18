@@ -6,7 +6,11 @@ async function bootstrap() {
 
     app.enableCors({
         origin: ['http://localhost:5173', 'https://api.brewlingo.be', 'https://brewlingo.be'],
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
         credentials: true,
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
     });
 
     await app.listen(process.env.PORT ?? 3000);
