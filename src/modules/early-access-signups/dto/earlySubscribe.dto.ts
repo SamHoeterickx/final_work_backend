@@ -1,6 +1,6 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { IsEmail, IsEnum, IsNotEmpty } from "class-validator";
-import { EPlatform } from "src/shared/types/types";
+import { EPlatform } from "../../../shared/types/types";
 
 @InputType()
 export class EarlySubscribeDto {

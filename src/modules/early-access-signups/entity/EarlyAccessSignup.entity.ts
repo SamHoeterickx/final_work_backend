@@ -1,6 +1,6 @@
 
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { EPlatform } from "src/shared/types/types";
+import { EPlatform } from "../../../shared/types/types";
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
