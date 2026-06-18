@@ -14,6 +14,7 @@ import { ResendService } from './modules/resend/resend.service';
 import { ChaptersModule } from './modules/chapters/chapters.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
 import { XpModule } from './modules/xp/xp.module';
+import { EarlyAccessSignupsModule } from './modules/early-access-signups/early-access-signups.module';
 
 @Module({
     imports: [
@@ -52,6 +53,7 @@ import { XpModule } from './modules/xp/xp.module';
         ChaptersModule,
         LessonsModule,
         XpModule,
+        EarlyAccessSignupsModule,
     ],
     providers: [
         AppService,

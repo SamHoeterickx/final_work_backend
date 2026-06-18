@@ -102,3 +102,12 @@ export enum ELessonScreenOptions {
 registerEnumType(ELessonScreenOptions, {
     name: 'ELessonScreenOptions',
 });
+
+
+export enum EPlatform {
+    IOS = 'ios',
+    ANDROID = 'android'
+}
+registerEnumType(EPlatform, {
+    name: 'EPlatform'
+});
