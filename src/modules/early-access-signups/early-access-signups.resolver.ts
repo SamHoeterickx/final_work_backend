@@ -11,8 +11,8 @@ export class EarlyAccessSignupsResolver {
         return await this.earlyAccessSignupService.getCount();
     }
 
-    @Mutation()
-    async subscribe(@Args('input') input: EarlySubscribeDto) {
+    @Mutation(() => Boolean)
+    async subscribe(@Args('input') input: EarlySubscribeDto): Promise<boolean> {
         return await this.earlyAccessSignupService.subscribe(input);
     }
 }
