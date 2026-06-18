@@ -5,7 +5,7 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     app.enableCors({
-        origin: ['http://localhost:5173', 'https://api.brewlingo.be', 'https://brewlingo.be'],
+        origin: ['http://localhost:5173', 'https://brewlingo.be'],
         methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
         credentials: true,
@@ -13,6 +13,6 @@ async function bootstrap() {
         optionsSuccessStatus: 204,
     });
 
-    await app.listen(process.env.PORT ?? 3000);
+    await app.listen(process.env.PORT ?? 8080);
 }
 void bootstrap();
